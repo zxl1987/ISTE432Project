@@ -38,7 +38,7 @@ On the application, there will be more functions besides the basic checking weat
 1. REST API - Use REST API technology to collect temperature data from OpenWeather (https://openweathermap.org/). 
 2. Developed Python QtGUI.
 
------------------------------------------
+-----------------------------------------------------------------------------------
 
 #### Design Pattern
 1. Observer Pattern will notify our application of anything change in the API. 
@@ -90,18 +90,20 @@ if __name__ == "__main__":
 
 3. UI Pattern recurring solution to common problems in UI design. We are trying to make every page clean, easy-to-use, and friendly. Here are two parts of our framework for our project:
 
-<img src="./doc_img/UI1.PNG" width="400"/>
-<img src="./doc_img/UI2.PNG" width="400"/>
-
+<p align="center">
+	<img src="./doc_img/UI1.PNG" width="300"/> <img src="./doc_img/UI2.PNG" width="300"/>
+</p>
 
 4. MVC stands for Model View Controller. MVC pattern will separate the program into three different layers. 
     - Data layer: Requesting data from API and get or insert data into the database. 
     - Application layer:  Managing data. 
     - Presentation layer: Communicating with the end-user. 
 
-<img src="./doc_img/folder_tree.PNG" width="200"/>
+<p align="center">
+	<img src="./doc_img/folder_tree.PNG" width="160"/>
+ </p>
  
- -----------------------------------------------------
+ ------------------------------------------------------------------------
  
 #### Timeline
 |Milestone  | Due Date |
@@ -181,9 +183,9 @@ def signUpUI():
 ```
 User interface looks like this:
 
-<img src="./doc_img/UI_1.PNG" width="400"/>
-<img src="./doc_img/UI_2.PNG" width="400"/>
-<img src="./doc_img/UI_3.PNG" width="400"/>
+<p align="center">
+	<img src="./doc_img/UI_1.PNG" width="250"/> <img src="./doc_img/UI_2.PNG" width="250"/> <img src="./doc_img/UI_3.PNG" width="250"/>
+</p>
 
 ##### Application Layer:
 This is a layer that gets the user input from the presentation layer and gets the data back from the data layer. 
