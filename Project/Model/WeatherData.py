@@ -16,11 +16,11 @@ class Getdata:
         data=self.datainfo.alldata()
         if 'message' in data:
             if 'Invalid API key' in data['message']:
-                self.weatherinfo= "Can't connect to the API or server is down. Try again later"
+                self.weatherinfo= "Service Downtime. Please try again later."
             if 'city not found' in data['message']:
-                self.weatherinfo = "City Not found!. Please type correct city"
+                self.weatherinfo = "Invalid input. Please re-enter."
             if '400' in data['cod']:
-                self.weatherinfo="Can't find this geographic coordinates"
+                self.weatherinfo="Geographic coordinates not found. Please re-enter."
         else:
             minTemp = (int(data['main']['temp_min']) - 273.15) * 9 / 5 + 32
             maxTemp = (int(data['main']['temp_max']) - 273.15) * 9 / 5 + 32
