@@ -271,7 +271,105 @@ class Weatherdata():
 database.py- Reads the data from the database and return to the application layer.
 
 
+#### Exception:
+1. Wrong Username / Password
+	- If the user enters the wrong username and password then display message "Wrong username/password. Please retry."
 
+2. Database Connection Error
+	- If the program can't connect to database then display message "Service Downtime. Please try again later."
+	
+3. API Connection Error
+	- If API doesn't work or if the program is unable to connect API then display message "Service Downtime. Please try again later."
+	
+
+4. Invalid User Input
+	- If the user enters an invalid input which contains any specical characters then display message "Invalid input. Please re-enter."
+	- Example: User enters "Rocheste!!!r" for city name.
+	
+5. Data not found
+	- If the user enters a city name which the API doesn't have any weather data for it or the user spells the input wrong then display message "No data found for this location. Please try other."
+	- Example: User enters "Rohcester" for city name. 
+	
+```python
+class handleException:
+    option=1
+    userinput=''
+
+    def __init__(self, option, userinput):
+        self.option = option
+        self.userinput=userinput
+        self.inputError
+
+    def inputError(self):
+        ## Handle error if user enter city name
+        if (self.option == 1):
+            if ',' in self.userinput:
+                if self.userinput.replace(',', '').replace(' ', '').isalpha():
+                    return True
+                else:
+                    return False
+            elif self.userinput.isalpha():
+                return True
+            else:
+                return False
+        ## Handle error if user enter zip code
+        if (self.option==2):
+            if ',' in self.userinput:
+                process=self.userinput.replace(' ', '')
+                process=process.split(",")
+                try:
+                    int(process[0])
+                except:
+                    return False
+                if not process[1].isalpha():
+                    return False
+            else:
+                try:
+                    int(self.userinput)
+                except:
+                    return False
+            return True
+        if (self.option == 3):
+            if ',' in self.userinput:
+                process = self.userinput.replace(' ', '')
+                process = process.split(",")
+                try:
+                    float(process[0])
+                    float(process[1])
+                except ValueError:
+                    return False
+            else:
+                return False
+            return True
+
+```
+
+```python
+def processData(self):
+        data=self.datainfo.alldata()
+        if 'message' in data:
+            if 'Invalid API key' in data['message']:
+                self.weatherinfo= "Service Downtime. Please try again later."
+            if 'city not found' in data['message']:
+                self.weatherinfo = "Invalid input. Please re-enter."
+            if '400' in data['cod']:
+                self.weatherinfo="Geographic coordinates not found. Please re-enter."
+```
+
+```python
+import MySQLdb
+
+class DB:
+	try:
+		db = MySQLdb.connect(host='localhost', user='root', passwd='student', db='weather')
+		cur = db.cursor()
+		cur.execute("select * from user;")
+		result = cur.fetchall()
+		print result
+	except:
+	    print("Service Downtime. Please try again later.")
+```
+ 
 
 
 
