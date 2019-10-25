@@ -5,7 +5,7 @@
 #### Team Members and Roles
 Zhimin Lin - Developer
 Feng Lin – Developer
- 
+
 #### Background
 Most of the weather applications or channels include so many complex functions, like a graph for temperature difference in one day, etc. Those functions are great but for some older people simple is the best. So, we like to develop an easy-to-use application for older people to check the weather. 
  
@@ -89,18 +89,17 @@ if __name__ == "__main__":
 ```
 
 3. UI Pattern recurring solution to common problems in UI design. We are trying to make every page clean, easy-to-use, and friendly. Here are two parts of our framework for our project:
-```
-UI framework
-```
+
+<img src="./doc_img/UI1.PNG" width="400"/>
+<img src="./doc_img/UI2.PNG" width="400"/>
 
 
 4. MVC stands for Model View Controller. MVC pattern will separate the program into three different layers. 
     - Data layer: Requesting data from API and get or insert data into the database. 
     - Application layer:  Managing data. 
     - Presentation layer: Communicating with the end-user. 
- ```
- folder tree diagram
- ```
+
+<img src="./doc_img/folder_tree.PNG" width="200"/>
  
  -----------------------------------------------------
  
@@ -181,9 +180,10 @@ def signUpUI():
 	signUp.mainloop() 
 ```
 User interface looks like this:
-```
-UI Image
-```
+
+<img src="./doc_img/UI_1.PNG" width="400"/>
+<img src="./doc_img/UI_2.PNG" width="400"/>
+<img src="./doc_img/UI_3.PNG" width="400"/>
 
 ##### Application Layer:
 This is a layer that gets the user input from the presentation layer and gets the data back from the data layer. 
