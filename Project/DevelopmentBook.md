@@ -38,7 +38,7 @@ On the application, there will be more functions besides the basic checking weat
 1. REST API - Use REST API technology to collect temperature data from OpenWeather (https://openweathermap.org/). 
 2. Developed Python QtGUI.
 
------------------------------------------
+-----------------------------------------------------------------------------------
 
 #### Design Pattern
 1. Observer Pattern will notify our application of anything change in the API. 
@@ -102,7 +102,8 @@ if __name__ == "__main__":
 <p align="center">
 	<img src="./doc_img/folder_tree.PNG" width="160"/>
  </p>
- -----------------------------------------------------
+ 
+ ------------------------------------------------------------------------
  
 #### Timeline
 |Milestone  | Due Date |
@@ -183,8 +184,9 @@ def signUpUI():
 User interface looks like this:
 
 <p align="center">
-	<img src="./doc_img/UI_1.PNG" width="250"/><img src="./doc_img/UI_2.PNG" width="250"/><img src="./doc_img/UI_3.PNG" width="250"/>
+	<img src="./doc_img/UI_1.PNG" width="250"/> <img src="./doc_img/UI_2.PNG" width="250"/> <img src="./doc_img/UI_3.PNG" width="250"/>
 </p>
+
 ##### Application Layer:
 This is a layer that gets the user input from the presentation layer and gets the data back from the data layer. 
 WeatherData.py- Its file takes the user input, then sends the user input to the data layer, data layer will return a JSON, then it will process the data and return to the presentation layer.
