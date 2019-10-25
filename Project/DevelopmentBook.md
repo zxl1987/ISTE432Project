@@ -6,7 +6,6 @@
 Zhimin Lin - Developer
 Feng Lin – Developer
  
- 
 #### Background
 Most of the weather applications or channels include so many complex functions, like a graph for temperature difference in one day, etc. Those functions are great but for some older people simple is the best. So, we like to develop an easy-to-use application for older people to check the weather. 
  
