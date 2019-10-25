@@ -2,19 +2,21 @@
 ###### ISTE 432 – Database Application Development
 ###### Zhimin Lin & Feng Lin
 ----------------------------------------------------
-##### Team Members and Roles
+#### Team Members and Roles
 Zhimin Lin - Developer
 Feng Lin – Developer
  
-##### Background
+#### Background
 Most of the weather applications or channels include so many complex functions, like a graph for temperature difference in one day, etc. Those functions are great but for some older people simple is the best. So, we like to develop an easy-to-use application for older people to check the weather. 
  
-##### Project Description
+ 
+#### Project Description
 For this project, we would like to develop an application that allows the user to check the current weather data for over 200,000 cities by giving either city name, zip code or geographic coordinates. Weather data include current temperature, highest temperature, lowest temperature, wind speed, cloud percentage, cloud description, and humidity.
  
 On the application, there will be more functions besides the basic checking weather information if user sign-up with their name and email address. Additional functions include set reminders, displays and view/search history. 
-		
-##### Project Requirements
+	
+	
+#### Project Requirements
 1. The application needs to be user-friendly.
 2. The application needs to be easy-to-use.
 3. Provide accurate temperature and weather information to the user.
@@ -25,16 +27,20 @@ On the application, there will be more functions besides the basic checking weat
 9. Require a database for weather information. 
 10. Require a database for user view/search history.
  
-##### Business Rules
+ 
+#### Business Rules
 1. User must provide information about the location that he/she likes to check the weather.
 2. Programable to return accurate weather information depending on the user input.
 3. The program will search for weather information depending on the user input, if no results found, an error message like “Location not found” will show.  
  
-##### Technologies Used
+ 
+#### Technologies Used
 1. REST API - Use REST API technology to collect temperature data from OpenWeather (https://openweathermap.org/). 
 2. Developed Python QtGUI.
+
 -----------------------------------------
-##### Design Pattern
+
+#### Design Pattern
 1. Observer Pattern will notify our application of anything change in the API. 
 Example: Current Temperature. 
 2. Adapter Pattern will work as a wrapper between two objects, by combining two independent interfaces.
@@ -81,10 +87,12 @@ def main():
 if __name__ == "__main__":
     main()
 ```
+
 3. UI Pattern recurring solution to common problems in UI design. We are trying to make every page clean, easy-to-use, and friendly. Here are two parts of our framework for our project:
 ```
 UI framework
 ```
+
 
 4. MVC stands for Model View Controller. MVC pattern will separate the program into three different layers. 
     - Data layer: Requesting data from API and get or insert data into the database. 
@@ -93,8 +101,10 @@ UI framework
  ```
  folder tree diagram
  ```
+ 
  -----------------------------------------------------
-##### Timeline
+ 
+#### Timeline
 |Milestone  | Due Date |
 |---|---|
 |Milestone 1 - Requirement | Sep 15, 2019 11:59 PM |
@@ -111,9 +121,11 @@ UI framework
 |10/03/2019 | Milestone 2 added - Design Pattern|
 |10/11/2019 | Milestone 3 added - Layering|
 |10/24/2019 | Milestonr 4 added - Exception|
+
 ------------------------------------------------------------
-##### Layering
-###### Presentation Layer:
+
+#### Layering
+##### Presentation Layer:
 Presentation layer is a representation of information and responsible to deliver data to the application layer.
 WeatherChecker.py - This python file configures the user interface then collects user input.
 ```python
@@ -173,7 +185,7 @@ User interface looks like this:
 UI Image
 ```
 
-###### Application Layer:
+##### Application Layer:
 This is a layer that gets the user input from the presentation layer and gets the data back from the data layer. 
 WeatherData.py- Its file takes the user input, then sends the user input to the data layer, data layer will return a JSON, then it will process the data and return to the presentation layer.
 ```python
@@ -213,6 +225,7 @@ iData.py- It’s  an interface which passes data from the data layer to applicat
 class DataInterface:
     def alldata(self): pass
 ```
+
 adapterData.py- It takes the JSON from the interface to WeatherData.py when the data layer sends the JSON back.
 ```python
 class Adapter():
@@ -223,7 +236,9 @@ class Adapter():
     def alldata(self):
         return self.interface.alldata()
 ```
+
 reminder.py- Every day it will send an email to the user of the daily weather(only for users who have an account)
+
 History.py- File to read the history of the user from the database and return to the presentation layer.
 
 ##### Data Layer:
@@ -250,6 +265,7 @@ class Weatherdata():
         return data
 
 ```
+
 database.py- Reads the data from the database and return to the application layer.
 
 
