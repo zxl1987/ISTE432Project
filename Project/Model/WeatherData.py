@@ -1,32 +1,39 @@
-from Data.apiData import *
-from adapterData import *
+import sys
+import os
+cwd = os.getcwd()
+parent_dir = (os.path.abspath(os.path.join(cwd, os.pardir)))
+sys.path.append(parent_dir)
 
-class Getdata:
-    datainfo = None
-    weatherinfo=None
+from Data.APIData import *
+from AdapterData import *
+
+
+class WeatherData:
+    dataInfo = None
+    weatherInfo = None
 
     def __init__(self, option, city):
-        getWeather = apiData(option, city)
-        adapter = Adapter(getWeather)
-        self.datainfo = adapter
+        getWeather = APIData(option, city)
+        adapter = AdapterData(getWeather)
+        self.dataInfo = adapter
         self.processData()
 
-
     def processData(self):
-        data=self.datainfo.alldata()
+        data = self.dataInfo.allData()
+
         if 'message' in data:
             if 'Invalid API key' in data['message']:
-                self.weatherinfo= "Service Downtime. Please try again later."
+                self.weatherInfo = "Service Downtime. Please try again later."
             if 'city not found' in data['message']:
-                self.weatherinfo = "Invalid input. Please re-enter."
+                self.weatherInfo = "Invalid input. Please re-enter."
             if '400' in data['cod']:
-                self.weatherinfo="Geographic coordinates not found. Please re-enter."
+                self.weatherInfo = "Geographic coordinates not found. Please re-enter."
         else:
             minTemp = (int(data['main']['temp_min']) - 273.15) * 9 / 5 + 32
             maxTemp = (int(data['main']['temp_max']) - 273.15) * 9 / 5 + 32
-            Temp = (int(data['main']['temp']) - 273.15) * 9 / 5 + 32
-            self.weatherinfo = [data['name'], round(minTemp, 2), round(maxTemp, 2), round(Temp, 2), data['wind']['speed'], data['weather'][0]['description']]
+            temp = (int(data['main']['temp']) - 273.15) * 9 / 5 + 32
+            self.weatherInfo = [data['name'], round(minTemp, 2), round(maxTemp, 2), round(temp, 2), data['wind']['speed'], data['weather'][0]['description']]
 
     def getWeatherInfo(self):
-        return self.weatherinfo
+        return self.weatherInfo
 

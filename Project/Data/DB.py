@@ -1,5 +1,6 @@
 import MySQLdb
 
+
 class DB:
 	try:
 		db = MySQLdb.connect(host='localhost', user='root', passwd='student', db='weather')

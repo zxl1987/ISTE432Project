@@ -1,7 +1,8 @@
-class Adapter():
+class AdapterData:
     interface = None
+
     def __init__(self, data):
         self.interface = data
 
-    def alldata(self):
-        return self.interface.alldata()
+    def allData(self):
+        return self.interface.allData()
