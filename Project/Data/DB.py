@@ -1,14 +1,13 @@
-import mysql.connector
-from mysql.connector import Error
+import psycopg2
 
 class Database:
+	conn=None
 	def connect(self):
 		try:
-			conn = mysql.connector.connect(host='localhost', database='userInfor', user='root', password='student')
-			if conn.is_connected():
-				return conn
-		except Error as e:
-			print(e)
+			conn = psycopg2.connect(host='localhost', database='userinfo', port = "1996", user='postgres', password='student')
+			return conn
+		except (Exception, psycopg2.DatabaseError) as error:
+			print(error)
 			conn.close()
 
 	def authUser(self, username, password):
@@ -18,8 +17,8 @@ class Database:
 			cur.execute("select user_id from users where username='"+username+"' and password='"+password+"';")
 			result = cur.fetchall()
 			return result
-		except Error as e:
-			print(e)
+		except (Exception, psycopg2.DatabaseError) as error:
+			print(error)
 		finally:
 			cur.close()
 			conn.close()
@@ -31,12 +30,11 @@ class Database:
 			cur.execute("select * from users where username='" + username + "';")
 			result = cur.fetchall()
 			return result
-		except Error as e:
-			print(e)
+		except (Exception, psycopg2.DatabaseError) as error:
+			print(error)
 		finally:
 			cur.close()
 			conn.close()
-
 
 	def setUser(self, username, password):
 		query="INSERT INTO users (username, password) VALUES (%s,%s);"
@@ -47,8 +45,8 @@ class Database:
 			cur.execute(query, args)
 			conn.commit()
 			return True
-		except Error as e:
-			print(e)
+		except (Exception, psycopg2.DatabaseError) as error:
+			print(error)
 			return False
 		finally:
 			cur.close()
