@@ -1,22 +1,23 @@
-DROP DATABASE IF EXISTS userInfor;
-CREATE DATABASE userInfor;
-use userInfor;
+DROP DATABASE IF EXISTS userinfo;
+CREATE DATABASE userinfo;
+\c userinfo;
 
 DROP TABLE if EXISTS users;
 CREATE TABLE users(
-	user_id INT NOT NULL AUTO_INCREMENT,
+	user_id SERIAL,
 	username varchar(50),
 	password varchar(50),
 	PRIMARY KEY (user_id )
 );
-
+DROP TABLE if EXISTS history;
 CREATE TABLE history(
-	history_id INT NOT NULL AUTO_INCREMENT,
+	history_id SERIAL,
 	user_id int,
-	local_type ENUM('1','2','3'),
+	local_type int,
 	address VARCHAR(50),
 	PRIMARY Key(history_id)
 );
+DROP TABLE if EXISTS information;
 CREATE TABLE information(
    user_id int,
    firstname VARCHAR(50),
@@ -33,7 +34,5 @@ VALUES ('fenglin', 'password');
 INSERT INTO history(user_id, local_type, address)
 values (1, 1, 'Rochester');
 
-INSERT INTO information(user_id, firstname, lastname, email, birth, address)
-Values (1, 'Feng', 'Lin', 'pytrade@gmail.com', '1996-08-06', 'FuckMyLife Street');
 
 select user_id from users where username='fenglin' and password='password';
