@@ -371,10 +371,72 @@ class DB:
 ```
  
 
+#### Refactoring:
+1. Our database has been updated from mySQL to Postgres DB
+```sql
+DROP DATABASE IF EXISTS userinfo;
+CREATE DATABASE userinfo;
+\c userinfo;
 
+DROP TABLE if EXISTS users;
+CREATE TABLE users(
+	user_id SERIAL,
+	username varchar(50),
+	password varchar(50),
+	PRIMARY KEY (user_id )
+);
+DROP TABLE if EXISTS history;
+CREATE TABLE history(
+	history_id SERIAL,
+	user_id int,
+	local_type int,
+	address VARCHAR(50),
+	PRIMARY Key(history_id)
+);
+DROP TABLE if EXISTS information;
+CREATE TABLE information(
+   user_id int,
+   firstname VARCHAR(50),
+   lastname VARCHAR(50),
+   email VARCHAR(50),
+   birth date,
+   address varchar(50),
+   PRIMARY Key(user_id)
+);
+```
 
+2. Functions have been updated to work with Postgres DB
+```python
+import psycopg2
 
+class Database:
+	conn=None
+	def connect(self):
+		try:
+			conn = psycopg2.connect(host='localhost', database='userinfo', port = "1996", user='postgres', password='student')
+			return conn
+		except (Exception, psycopg2.DatabaseError) as error:
+			print(error)
+			conn.close()
+```
 
+3. API response have been updated from a JSON string contains all data to a list only contains the data we want.
+```python
+    def processData(self):
+        data = self.dataInfo.allData()
+        if 'message' in data:
+            if 'Invalid API key' in data['message']:
+                self.weatherInfo = "Service Downtime. Please try again later."
+            if 'city not found' in data['message']:
+                self.weatherInfo = "Invalid input. Please re-enter."
+            if '400' in data['cod']:
+                self.weatherInfo = "Geographic coordinates not found. Please re-enter."
+        else:
+            minTemp = (int(data['main']['temp_min']) - 273.15) * 9 / 5 + 32
+            maxTemp = (int(data['main']['temp_max']) - 273.15) * 9 / 5 + 32
+            temp = (int(data['main']['temp']) - 273.15) * 9 / 5 + 32
+            self.weatherInfo = [data['name'], round(minTemp, 2), round(maxTemp, 2), round(temp, 2), data['wind']['speed'], data['weather'][0]['description']]
+```
  
  
 
