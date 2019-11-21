@@ -7,8 +7,8 @@ from Model.WeatherData import *
 from Model.handleException import *
 
 def test():
-    cityName = '19, 35'
-    option = 3
+    cityName = 'Brooklyn'
+    option = 1
 
     handleError = handleException(option, cityName)
     if handleError.inputError():

@@ -1,67 +1,202 @@
-from Tkinter import *
+import sys
+import os
+cwd = os.getcwd()
+parent_dir = (os.path.abspath(os.path.join(cwd, os.pardir)))
+sys.path.append(parent_dir)
 
+from Tkinter import *
+from Model.UserData import *
+from Model.WeatherData import *
+from Model.handleException import *
 login = None
 
+
 def loginUI():
-	global login
-	login = Tk() 
-	login.title('Login')
-	login.geometry("400x200+200+130") 
+    global login
+    global usernameTextFieldLogin
+    global passwordTextFieldLogin
+    global loginLabel
+    
+    login = Tk()
+    login.title('Login')
+    login.geometry("400x200+200+130")
 
-	usernameLabel = Label(login, text="User Name", font=("Helvetica", 12))
-	usernameLabel.place(x=60, y=30)
+    usernameLabel = Label(login, text="User Name", font=("Helvetica", 12))
+    usernameLabel.place(x=60, y=30)
 
-	usernameTextField = Text(login)
-	usernameTextField.place(x=150, y=30, height=25, width=200)
+    usernameTextFieldLogin = Text(login)
+    usernameTextFieldLogin.place(x=150, y=30, height=25, width=200)
 
-	passwordLabel = Label(login, text="Password", font=("Helvetica", 12))
-	passwordLabel.place(x=60, y=72)
+    passwordLabel = Label(login, text="Password", font=("Helvetica", 12))
+    passwordLabel.place(x=60, y=72)
 
-	passwordTextField = Text(login)
-	passwordTextField.place(x=150, y=70, height=25, width=200)
+    passwordTextFieldLogin = Text(login)
+    passwordTextFieldLogin.place(x=150, y=70, height=25, width=200)
 
-	loginButton = Button(login,text="Login", command=checkLogin)
-	loginButton.place(anchor=CENTER, x=200, y=150, height=25, width=80)
+    loginLabel = Label(login, text="", font=("Helvetica", 12))
+    loginLabel.place(anchor=CENTER, x=200, y=115)
 
-	login.mainloop() 
+    loginTo = Button(login, text="Login", command=checklogin)
+    loginTo.place(anchor=CENTER, x=200, y=150, height=25, width=80)
+
+    login.mainloop()
+
+
+def checklogin():
+    	global usernameTextFieldLogin
+    	global passwordTextFieldLogin
+        global loginLabel
+        loginCheck = verify(usernameTextFieldLogin.get("1.0", 'end-1c'),passwordTextFieldLogin.get("1.0", 'end-1c'))
+   	if loginCheck == False: 
+		loginLabel.config(text='Wrong Username/Password',foreground="red")
+   	elif loginCheck == True: 
 	
-def checkLogin():
-	global login
-	login.destroy()
-	main.geometry("800x400+100+100") 
+		global login
+		login.destroy()
+		main.geometry("1000x400+100+100")
+
+		loginButton.place(anchor=CENTER, x=830, y=20, height=25, width=80)
+		signupButton.place(anchor=CENTER, x=950, y=20, height=25, width=80)
+		orLabel.place(x=880, y=10)
+		logoutButton = Button(main, text="Logout", bg='#cceeff')
+		logoutButton.place(anchor=CENTER, x=830, y=20, height=25, width=80)
+
+		reminderLabel = Label(main, text="Set Reminder", font=("Times", 12))
+		reminderLabel.place(x=550, y=70)
+
+		dateLabel = Label(main, text="Date", font=("Times", 12))
+		dateLabel.place(x=600, y=100)
+
+		dateTextField = Text(main)
+		dateTextField.place(x=650, y=100, height=25, width=110)
+
+		timeLabel = Label(main, text="Time", font=("Times", 12))
+		timeLabel.place(x=780, y=100)
+
+		timeTextField = Text(main)
+		timeTextField.place(x=830, y=100, height=25, width=80)
+
+		options = ('Everyday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday')
+		var = StringVar();
+		var.set(options[0])
+		dayOptionMenu = OptionMenu(main, var, *options)
+		dayOptionMenu.place(x=635, y=150, height=30, width=130)
+
+		time2Label = Label(main, text="Time", font=("Times", 12))
+		time2Label.place(x=780, y=150)
+
+		time2TextField = Text(main)
+		time2TextField.place(x=830, y=150, height=25, width=80)
+
+		orReminderLabel = Label(main, text="or", font=("Times", 12))
+		orReminderLabel.place(x=760, y=125)
+
+		setButton = Button(main, text="Set")
+		setButton.place(anchor=CENTER, x=950, y=138, height=25, width=60)
+
+		historyLabel = Label(main, text="Search History", font=("Times", 12))
+		historyLabel.place(x=550, y=200)
+
+		historyTextField = Text(main)
+		historyTextField.place(x=600, y=230, height=100, width=300)
+
+		scrollbar = Scrollbar(historyTextField)
+		scrollbar.pack(side=RIGHT, fill=Y)
+
+		historyTextField.config(yscrollcommand=scrollbar.set)
+		scrollbar.config(command=historyTextField.yview)
+
+		historyClear = Button(main, text="Clear")
+		historyClear.place(anchor=CENTER, x=950, y=270, height=25, width=60)
+
 
 def signUpUI():
-	signUp = Tk() 
-	signUp.title('Sign Up')
-	signUp.geometry("400x230+200+130") 
+	global usernameTextFieldSignUp
+	global passwordTextFieldSignUp
+	global emailTextFieldSignUp
+	global signUpLabel
 
-	usernameLabel = Label(signUp,text="User Name", font=("Helvetica", 12))
+	signUp = Tk()
+	signUp.title('Sign Up')
+	signUp.geometry("400x230+200+130")
+
+	usernameLabel = Label(signUp, text="User Name", font=("Helvetica", 12))
 	usernameLabel.place(x=60, y=30)
 
-	usernameTextField = Text(signUp)
-	usernameTextField.place(x=150, y=30, height=25, width=200)
+	usernameTextFieldSignUp = Text(signUp)
+	usernameTextFieldSignUp.place(x=150, y=30, height=25, width=200)
 
 	passwordLabel = Label(signUp, text="Password", font=("Helvetica", 12))
 	passwordLabel.place(x=60, y=72)
 
-	passwordTextField = Text(signUp)
-	passwordTextField.place(x=150, y=70, height=25, width=200)
+	passwordTextFieldSignUp = Text(signUp)
+	passwordTextFieldSignUp.place(x=150, y=70, height=25, width=200)
 
 	emailLabel = Label(signUp, text="Email", font=("Helvetica", 12))
 	emailLabel.place(x=60, y=114)
 
-	emailTextField = Text(signUp)
-	emailTextField.place(x=150, y=110, height=25, width=200)
+	emailTextFieldSignUp = Text(signUp)
+	emailTextFieldSignUp.place(x=150, y=110, height=25, width=200)
 
-	signupButton = Button(signUp,text="Sign Up", command=signUp.destroy)
+	signUpLabel = Label(signUp, text="", font=("Helvetica", 12))
+    	signUpLabel.place(anchor=CENTER, x=200, y=150)
+
+	signupButton = Button(signUp, text="Sign Up", command=checkSignUp)
 	signupButton.place(anchor=CENTER, x=200, y=180, height=25, width=80)
 
 	signUp.mainloop()
 
 
-main = Tk() 
+def checkSignUp():
+    	global usernameTextFieldSignUp
+	global passwordTextFieldSignUp
+	global emailTextFieldSignUp
+	global signUpLabel
+        signUpCheck = signUp(usernameTextFieldSignUp.get("1.0", 'end-1c'),passwordTextFieldSignUp.get("1.0", 'end-1c'))
+   	if signUpCheck != True: 
+	     signUpLabel.config(text=signUpCheck,foreground="red")
+   	elif signUpCheck == True: 
+	     signUpLabel.config(text="Congratulations!",foreground="green")
+
+def search():
+	global locationTextField
+	global currentTempLabel
+	global lowestTempLabel
+	global highestTempLabel
+	global windSpeedLabel
+	global cloudPrecentageLabel
+	global cloundDescriptionLabel
+	global searchLabel
+	cityName = locationTextField.get("1.0", 'end-1c')
+	option = 1
+	handleError = handleException(option, cityName)
+	if handleError.inputError():
+		info = WeatherData(option, cityName)
+		data = info.getWeatherInfo()
+		print(data[3])
+		currentTempLabel.config(text="Current Temperature: "+str(data[3])+" F")
+		lowestTempLabel.config(text="Lowest Temperature: "+str(data[1])+" F")
+		highestTempLabel.config(text="Highest Temperature: "+str(data[2])+" F")
+		windSpeedLabel.config(text="Wind Speed: "+str(data[4])+" m/h")
+		cloudPrecentageLabel.config(text="Cloud Percentage: X%")
+		cloundDescriptionLabel.config(text="Cloud Description: "+data[5])
+		searchLabel.config(text="")	
+	else:
+		searchLabel.config(text="Invalidate input!",foreground="red")	
+
+		
+
+global locationTextField
+global currentTempLabel
+global lowestTempLabel
+global highestTempLabel
+global windSpeedLabel
+global cloudPrecentageLabel
+global cloundDescriptionLabel
+global searchLabel
+main = Tk()
 main.title('Weather Checker')
-main.geometry("600x400+100+100") 	
+main.geometry("600x400+100+100")
 
 appNameLabel = Label(main, text="Weather Checker", font=("Helvetica", 20))
 appNameLabel.place(anchor=CENTER, x=300, y=85)
@@ -72,10 +207,10 @@ locationLabel.place(x=120, y=152)
 locationTextField = Text(main)
 locationTextField.place(x=190, y=150, height=25, width=200)
 
-searchButton = Button(main, text="Search")
+searchButton = Button(main, text="Search", command=search)
 searchButton.place(x=410, y=150, height=25, width=80)
 
-loginButton = Button(main,text="Login", bg='#cceeff', command=loginUI)
+loginButton = Button(main, text="Login", bg='#cceeff', command=loginUI)
 loginButton.place(x=380, y=10, height=25, width=80)
 
 orLabel = Label(main, text="or", font=("Helvetica", 12))
@@ -102,11 +237,17 @@ cloudPrecentageLabel.place(x=330, y=255)
 cloundDescriptionLabel = Label(main, text="Cloud Description: X", font=("Helvetica", 12))
 cloundDescriptionLabel.place(x=330, y=290)
 
-main.mainloop() 
+searchLabel = Label(main, text="1", font=("Helvetica", 12))
+searchLabel.place(anchor=CENTER, x=300, y=340)
+
+main.mainloop()
 
 
 
 
 
-	
+
+
+
+
 
