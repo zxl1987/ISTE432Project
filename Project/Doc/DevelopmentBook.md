@@ -438,9 +438,50 @@ class Database:
             self.weatherInfo = [data['name'], round(minTemp, 2), round(maxTemp, 2), round(temp, 2), data['wind']['speed'], data['weather'][0]['description']]
 ```
  
- 
+ #### Testing:
+ 1. Test WeatherData funciton and validation of user input.
+```python
+from Model.WeatherData import *
+from Model.handleException import *
+
+def test():
+    cityName = 'Brooklyn'
+    option = 1
+
+    handleError = handleException(option, cityName)
+    if handleError.inputError():
+        printdata = WeatherData(option, cityName)
+        print printdata.getWeatherInfo()
+    else:
+        print "Invalidate input!"
 
 
+if __name__ == "__main__":
+```
+
+2. Test verity, signUp and setInformaiton functions.  
+```python
+from UserData import *
+getUser=UserData()
+def test():
+    print getUser.verify("fenglin","password")
+    print getUser.signUp("fegli1", "password","Feng@gmail.com")
+    print getUser.setInformation("Feng", "Lin", "1996-08-06", "Windish")
+if __name__ == "__main__":
+    test()
+```
+
+3. Test setUser, verifyUser and setUserInfo functions.
+```python
+from DB import *
+getDB=Database()
+def test():
+    print(getDB.setUser("fenglin123", "password", "meial@gmail"))
+    print(getDB.verifyUser("fenglin123"))
+    print(getDB.setUserInfo("1", "Feng", "Lin", "1996-12-18","Windish"))
+if __name__ == "__main__":
+    test()
+```
 
 
 
