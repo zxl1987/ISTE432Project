@@ -7,6 +7,7 @@ CREATE TABLE users(
 	user_id SERIAL,
 	username varchar(50),
 	password varchar(50),
+	email VARCHAR(50),
 	PRIMARY KEY (user_id )
 );
 DROP TABLE if EXISTS history;
@@ -22,7 +23,6 @@ CREATE TABLE information(
    user_id int,
    firstname VARCHAR(50),
    lastname VARCHAR(50),
-   email VARCHAR(50),
    birth date,
    address varchar(50),
    PRIMARY Key(user_id)

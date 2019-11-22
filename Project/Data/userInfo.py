@@ -1,4 +1,4 @@
-class userInformation:
+class userInfo:
     userId = None
     username=None
     password=None
