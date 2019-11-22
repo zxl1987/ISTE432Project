@@ -439,6 +439,7 @@ class Database:
 ```
  
  #### Testing:
+ 1. Test WeatherData funciton and validation of user input.
 ```python
 from Model.WeatherData import *
 from Model.handleException import *
@@ -458,6 +459,7 @@ def test():
 if __name__ == "__main__":
 ```
 
+2. Test verity, signUp and setInformaiton functions.  
 ```python
 from UserData import *
 getUser=UserData()
@@ -469,6 +471,7 @@ if __name__ == "__main__":
     test()
 ```
 
+3. Test setUser, verifyUser and setUserInfo functions.
 ```python
 from DB import *
 getDB=Database()
