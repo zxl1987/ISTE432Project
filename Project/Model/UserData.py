@@ -14,7 +14,6 @@ class UserData:
             return False
 
     def signUp(self, username, password, email):
-        print userInfo.getUserid()
         regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
         if ' ' in username or ' ' in password:
             return "User name or password can't contain the space"
@@ -29,13 +28,27 @@ class UserData:
         getDB.setUser(username, password, email)
         return True
 
+    '''----------------------------------------------------------New Function-------------------------------------------------------------------------------------------------'''
+    '''Get a list of User Information '''
     def vieUserInformation(self):
-        return getDB.viewUserInfo(userInfo.getUserid())
+        return getDB.viewUserInfo(str(userInfo.getUserid()))
 
+    '''Set the User Information'''
     def setInformation(self, firstname, lastname, birth, address):
-        if(getDB.viewUserInfo(userInfo.getUserid())):
-            print "yest"
-            getDB.updateInfo(userInfo.getUserid(), firstname, lastname, birth, address)
+        if birth=="":
+            birth="Infinity"
+        if getDB.viewUserInfo(str(userInfo.getUserid())):
+            getDB.updateInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
         else:
-            print "no"
-            getDB.setUserInfo(userInfo.getUserid(), firstname, lastname, birth, address)
+            getDB.setUserInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
+
+    '''Get a list of User History'''
+    def viewUserHistory(self):
+        return getDB.getUserHistory(str(userInfo.getUserid()))
+
+    '''Delete a list of '''
+    def deleteHisiotry(self, historyId):
+        return getDB.deleteUserHistory(str(userInfo.getUserid()), historyId)
+
+    def saveHistory(self, type, location):
+        return getDB.setUserHistory(str(userInfo.getUserid()), type, location)

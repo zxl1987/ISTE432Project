@@ -103,3 +103,49 @@ class Database:
 			cur.close()
 			conn.close()
 
+	def getUserHistory(self, userId):
+		conn = self.connect()
+		try:
+			cur = conn.cursor()
+			cur.execute("select * from history where user_id='" + userId + "';")
+			result = cur.fetchall()
+			return result
+		except (Exception, psycopg2.DatabaseError) as error:
+			return False
+		finally:
+			cur.close()
+			conn.close()
+
+	def setUserHistory(self, userId, type, location):
+		query = "INSERT INTO history (user_id, local_type, address) VALUES (%s,%s,%s);"
+		args = (userId, type, location)
+		conn = self.connect()
+		try:
+			cur = conn.cursor()
+			cur.execute(query, args)
+			conn.commit()
+			return True
+		except (Exception, psycopg2.DatabaseError) as error:
+			print error
+			return False
+		finally:
+			cur.close()
+			conn.close()
+
+	def deleteUserHistory(self, userId, hisotry_id):
+		query = "DELETE FROM history where user_id = %s and history_id= %s;"
+		args = (userId, hisotry_id)
+		conn = self.connect()
+		try:
+			cur = conn.cursor()
+			cur.execute(query, args)
+			conn.commit()
+			return True
+		except (Exception, psycopg2.DatabaseError) as error:
+			print error
+			return False
+		finally:
+			cur.close()
+			conn.close()
+
+
