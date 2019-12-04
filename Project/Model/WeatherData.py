@@ -6,7 +6,8 @@ sys.path.append(parent_dir)
 
 from Data.apiData import *
 from adapterData import *
-
+from Model.UserData import *
+user=UserData
 
 class WeatherData:
     dataInfo = None
@@ -16,9 +17,9 @@ class WeatherData:
         getWeather = APIData(option, city)
         adapter = AdapterData(getWeather)
         self.dataInfo = adapter
-        self.processData()
+        self.processData(option,city)
 
-    def processData(self):
+    def processData(self,option,city):
         data = self.dataInfo.allData()
         if 'message' in data:
             if 'Invalid API key' in data['message']:
@@ -28,6 +29,7 @@ class WeatherData:
             if '400' in data['cod']:
                 self.weatherInfo = "Geographic coordinates not found. Please re-enter."
         else:
+	    user.saveHistory(self,option,city)
             minTemp = (int(data['main']['temp_min']) - 273.15) * 9 / 5 + 32
             maxTemp = (int(data['main']['temp_max']) - 273.15) * 9 / 5 + 32
             temp = (int(data['main']['temp']) - 273.15) * 9 / 5 + 32

@@ -25,12 +25,15 @@ class UserData:
         regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
         if (not re.search(regex, email)):
             return ("Invalid Email")
-        getDB.setUser(username, password, email)
-        return True
-
+        signup = getDB.setUser(username, password, email)
+        if signup:
+	    return True
+	else:
+            return False
+	
     '''----------------------------------------------------------New Function-------------------------------------------------------------------------------------------------'''
     '''Get a list of User Information '''
-    def vieUserInformation(self):
+    def viewUserInformation(self):
         return getDB.viewUserInfo(str(userInfo.getUserid()))
 
     '''Set the User Information'''
@@ -38,9 +41,10 @@ class UserData:
         if birth=="":
             birth="Infinity"
         if getDB.viewUserInfo(str(userInfo.getUserid())):
-            getDB.updateInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
+            result= getDB.updateInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
         else:
-            getDB.setUserInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
+            resukt= getDB.setUserInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
+	return result
 
     '''Get a list of User History'''
     def viewUserHistory(self):
@@ -49,6 +53,14 @@ class UserData:
     '''Delete a list of '''
     def deleteHisiotry(self, historyId):
         return getDB.deleteUserHistory(str(userInfo.getUserid()), historyId)
-
+    
+    @staticmethod
     def saveHistory(self, type, location):
         return getDB.setUserHistory(str(userInfo.getUserid()), type, location)
+
+    def getUserEmail(self):
+	return getDB.getUserEmail(str(userInfo.getUserid()))
+	
+
+   
+	

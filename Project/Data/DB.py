@@ -3,8 +3,9 @@ conn = None
 class Database:
 	def connect(self):
 		try:
-			conn = psycopg2.connect(host='localhost', database='userinfo', port="1996", user='postgres',
-									password='student')
+			'''
+			conn = psycopg2.connect(host='localhost', database='userinfo', port="1996", user='postgres',password='student')'''
+			conn = psycopg2.connect(host='localhost', database='userinfo', port = "5432", user="user1", password="password1")
 			return conn
 		except (Exception, psycopg2.DatabaseError) as error:
 			print(error)
@@ -44,7 +45,7 @@ class Database:
 			conn.close()
 
 	def setUser(self, username, password, email):
-		query="INSERT INTO users (username, password ,email) VALUES (%s,%s,%s);"
+		query="INSERT INTO users (username, password, email) VALUES (%s,%s,%s);"
 		args=(username, password, email)
 		conn = self.connect()
 		try:
@@ -103,6 +104,19 @@ class Database:
 			cur.close()
 			conn.close()
 
+	def getUserEmail(self,userId):
+		conn=self.connect()
+		try:
+			cur = conn.cursor()
+			cur.execute("select email from users where user_id='" + userId + "';")
+			result = cur.fetchall()
+			return result
+		except (Exception, psycopg2.DatabaseError) as error:
+			return False
+		finally:
+			cur.close()
+			conn.close()
+
 	def getUserHistory(self, userId):
 		conn = self.connect()
 		try:
@@ -147,5 +161,6 @@ class Database:
 		finally:
 			cur.close()
 			conn.close()
+	
 
 

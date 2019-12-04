@@ -1,5 +1,5 @@
 import sys
-import os
+import os, subprocess 
 cwd = os.getcwd()
 parent_dir = (os.path.abspath(os.path.join(cwd, os.pardir)))
 sys.path.append(parent_dir)
@@ -8,8 +8,55 @@ from Tkinter import *
 from Model.UserData import *
 from Model.WeatherData import *
 from Model.handleException import *
+from Model.Reminder import *
 login = None
+user = UserData()
+searchWeather = False
 
+
+def restart_program():
+    python = sys.executable
+    os.execl(python, python, * sys.argv)
+
+def setReminder():
+    global searchWeather
+    global locationTextField
+    option = 1
+    cityName = locationTextField.get("1.0", 'end-1c')
+    info = WeatherData(option, cityName)
+    data = info.getWeatherInfo()
+    msg = "Weather for "+cityName+"\n\n"
+    msg += "Current Temperature: "+str(data[3])+" F\n"
+    msg += "Lowest Temperature: "+str(data[1])+" F\n"
+    msg += "Highest Temperature: "+str(data[2])+" F\n"
+    msg += "Wind Speed: "+str(data[4])+" m/h\n"
+    msg += "Cloud Percentage: X%\n"
+    msg += "Cloud Description: "+data[5]
+
+
+    if searchWeather == True:
+    	email = user.getUserEmail()[0][0]
+    	sendReminder(email,msg)
+    else:
+	print 'no'
+
+def saveProfile():
+    global firstnameTextField
+    global lastnameTextField
+    global birthdayTextField
+    global addressTextField
+    global profileLabel
+    print(user.setInformation(firstnameTextField.get("1.0", 'end-1c'),
+			lastnameTextField.get("1.0", 'end-1c'),
+			birthdayTextField.get("1.0", 'end-1c'),
+			addressTextField.get("1.0", 'end-1c')))
+    if not user.setInformation(firstnameTextField.get("1.0", 'end-1c'),
+			lastnameTextField.get("1.0", 'end-1c'),
+			birthdayTextField.get("1.0", 'end-1c'),
+			addressTextField.get("1.0", 'end-1c')):
+	profileLabel.config(text='Invalid input',foreground="red")
+    else:
+	profileLabel.config(text='Saved',foreground="green")
 
 def loginUI():
     global login
@@ -39,6 +86,8 @@ def loginUI():
     loginTo = Button(login, text="Login", command=checklogin)
     loginTo.place(anchor=CENTER, x=200, y=150, height=25, width=80)
 
+    
+
     login.mainloop()
 
 
@@ -46,7 +95,8 @@ def checklogin():
     	global usernameTextFieldLogin
     	global passwordTextFieldLogin
         global loginLabel
-        loginCheck = verify(usernameTextFieldLogin.get("1.0", 'end-1c'),passwordTextFieldLogin.get("1.0", 'end-1c'))
+	global user
+        loginCheck = user.verify(usernameTextFieldLogin.get("1.0", 'end-1c'),passwordTextFieldLogin.get("1.0", 'end-1c'))
    	if loginCheck == False: 
 		loginLabel.config(text='Wrong Username/Password',foreground="red")
    	elif loginCheck == True: 
@@ -58,7 +108,7 @@ def checklogin():
 		loginButton.place(anchor=CENTER, x=830, y=20, height=25, width=80)
 		signupButton.place(anchor=CENTER, x=950, y=20, height=25, width=80)
 		orLabel.place(x=880, y=10)
-		logoutButton = Button(main, text="Logout", bg='#cceeff')
+		logoutButton = Button(main, text="Logout", bg='#cceeff',command = restart_program)
 		logoutButton.place(anchor=CENTER, x=830, y=20, height=25, width=80)
 
 		reminderLabel = Label(main, text="Set Reminder", font=("Times", 12))
@@ -91,7 +141,7 @@ def checklogin():
 		orReminderLabel = Label(main, text="or", font=("Times", 12))
 		orReminderLabel.place(x=760, y=125)
 
-		setButton = Button(main, text="Set")
+		setButton = Button(main, text="Set", command = setReminder)
 		setButton.place(anchor=CENTER, x=950, y=138, height=25, width=60)
 
 		historyLabel = Label(main, text="Search History", font=("Times", 12))
@@ -108,7 +158,63 @@ def checklogin():
 
 		historyClear = Button(main, text="Clear")
 		historyClear.place(anchor=CENTER, x=950, y=270, height=25, width=60)
+		
+		if not user.viewUserInformation():
+			userWelcomeMsg = "Welcome"
+		else:
+			userWelcomeMsg = "Welcome " + str(user.viewUserInformation()[0][1])
+		userWelcomeLabel = Label(main, text=userWelcomeMsg, font=("Helvetica", 12))
+		userWelcomeLabel.place(x=10, y=2)
+		
+		editButton = Button(main, text="Edit Profile", bg='#cceeff', command=editProfile)
+		editButton.place(x=10, y=25, height=20, width=100)
 
+
+def editProfile():
+	global firstnameTextField;
+	global lastnameTextField;
+	global birthdayTextField;
+	global addressTextField;
+        global profileLabel;
+	profile = Tk()
+	profile.title('Profile')
+	profile.geometry("400x270+200+130")
+
+	firstnameLabel = Label(profile, text="First Name", font=("Helvetica", 12))
+	firstnameLabel.place(x=60, y=30)
+		
+	firstnameTextField = Text(profile)
+	firstnameTextField.place(x=150, y=30, height=25, width=200)
+	firstnameTextField.insert(END,str(user.viewUserInformation()[0][1]))
+
+	lastnameLabel = Label(profile, text="Last Name", font=("Helvetica", 12))
+	lastnameLabel.place(x=60, y=72)
+	
+	lastnameTextField = Text(profile)
+	lastnameTextField.place(x=150, y=72, height=25, width=200)
+        lastnameTextField.insert(END,str(user.viewUserInformation()[0][2]))
+
+	birthdayLabel = Label(profile, text="Birthday", font=("Helvetica", 12))
+	birthdayLabel.place(x=60, y=114)
+	
+	birthdayTextField = Text(profile)
+	birthdayTextField.place(x=150, y=114, height=25, width=200)
+	birthdayTextField.insert(END,str(user.viewUserInformation()[0][3]))
+
+	addressLabel = Label(profile, text="Address", font=("Helvetica", 12))
+	addressLabel.place(x=60, y=156)
+	
+	addressTextField = Text(profile)
+	addressTextField.place(x=150, y=156, height=25, width=200)
+	addressTextField.insert(END,str(user.viewUserInformation()[0][4]))
+
+	saveButton = Button(profile, text="Save",command=saveProfile)
+	saveButton.place(anchor=CENTER, x=200, y=228, height=25, width=80)
+
+	profileLabel = Label(profile, text="", font=("Helvetica", 12))
+    	profileLabel.place(anchor=CENTER, x=200, y=195)
+
+	profile.mainloop()
 
 def signUpUI():
 	global usernameTextFieldSignUp
@@ -148,11 +254,12 @@ def signUpUI():
 
 
 def checkSignUp():
+	global user
     	global usernameTextFieldSignUp
 	global passwordTextFieldSignUp
 	global emailTextFieldSignUp
 	global signUpLabel
-        signUpCheck = signUp(usernameTextFieldSignUp.get("1.0", 'end-1c'),passwordTextFieldSignUp.get("1.0", 'end-1c'))
+        signUpCheck = user.signUp(usernameTextFieldSignUp.get("1.0", 'end-1c'),passwordTextFieldSignUp.get("1.0", 'end-1c'),emailTextFieldSignUp.get("1.0", 'end-1c'))
    	if signUpCheck != True: 
 	     signUpLabel.config(text=signUpCheck,foreground="red")
    	elif signUpCheck == True: 
@@ -167,22 +274,31 @@ def search():
 	global cloudPrecentageLabel
 	global cloundDescriptionLabel
 	global searchLabel
+	global searchWeather
 	cityName = locationTextField.get("1.0", 'end-1c')
 	option = 1
 	handleError = handleException(option, cityName)
 	if handleError.inputError():
 		info = WeatherData(option, cityName)
 		data = info.getWeatherInfo()
-		print(data[3])
 		currentTempLabel.config(text="Current Temperature: "+str(data[3])+" F")
 		lowestTempLabel.config(text="Lowest Temperature: "+str(data[1])+" F")
 		highestTempLabel.config(text="Highest Temperature: "+str(data[2])+" F")
 		windSpeedLabel.config(text="Wind Speed: "+str(data[4])+" m/h")
-		cloudPrecentageLabel.config(text="Cloud Percentage: X%")
+		cloudPrecentageLabel.config(text="Humidity: "+str(data[6])+"%")
 		cloundDescriptionLabel.config(text="Cloud Description: "+data[5])
 		searchLabel.config(text="")	
+		searchWeather = True
+		print(user.viewUserHistory())
 	else:
-		searchLabel.config(text="Invalidate input!",foreground="red")	
+		searchLabel.config(text="Invalidate input!",foreground="red")
+		currentTempLabel.config(text="Current Temperature: X F")
+		lowestTempLabel.config(text="Lowest Temperature: X F")
+		highestTempLabel.config(text="Highest Temperature: X F")
+		windSpeedLabel.config(text="Wind Speed: X m/h")
+		cloudPrecentageLabel.config(text="Humidity: X%")
+		cloundDescriptionLabel.config(text="Cloud Description: X")	
+		searchWeather = False
 
 		
 
@@ -231,14 +347,16 @@ highestTempLabel.place(x=70, y=290)
 windSpeedLabel = Label(main, text="Wind Speed: X m/h", font=("Helvetica", 12))
 windSpeedLabel.place(x=330, y=220)
 
-cloudPrecentageLabel = Label(main, text="Cloud Percentage: X%", font=("Helvetica", 12))
+cloudPrecentageLabel = Label(main, text="Humidity: X%", font=("Helvetica", 12))
 cloudPrecentageLabel.place(x=330, y=255)
 
 cloundDescriptionLabel = Label(main, text="Cloud Description: X", font=("Helvetica", 12))
 cloundDescriptionLabel.place(x=330, y=290)
 
-searchLabel = Label(main, text="1", font=("Helvetica", 12))
+searchLabel = Label(main, text="", font=("Helvetica", 12))
 searchLabel.place(anchor=CENTER, x=300, y=340)
+
+
 
 main.mainloop()
 
