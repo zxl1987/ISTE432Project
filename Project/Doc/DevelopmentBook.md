@@ -486,30 +486,30 @@ if __name__ == "__main__":
 1. Download WeatherChecker.zip folder from myCourse dropbox
 2. Unzip it and place it on the desktop
 3. Open terminal
-4. Create a new user for postgres sql
-        a. Type: sudo su postgres
-	b. Type: createuser --interactive --pwprompt
-	c. Enter “user1” for username
-	d. Enter “password1 for password”
-	e. Enter “y” when asked question Shall the new role be a superuser
+4. Create a new user for postgres sql<br/>
+	a. Type: sudo su postgres<br/>
+	b. Type: createuser --interactive --pwprompt<br/>
+	c. Enter “user1” for username<br/>
+	d. Enter “password1 for password”<br/>
+	e. Enter “y” when asked question Shall the new role be a superuser<br/>
 	f. Type “exit”
 
-5. If you don’t have pip install in your machine, please do:
+5. If you don’t have pip install in your machine, please do:<br/>
 	a. Type: sudo apt install python-pip
-5. Type: pip install requests
+6. Type: pip install requests
 7. Type: sudo apt-get install python-tk
-8. Type: sudo apt-get install python-psycopg2
-	a.Enter “y” when asked do you want to continue
+8. Type: sudo apt-get install python-psycopg2<br/>
+	a. Enter “y” when asked do you want to continue
 9. Change Directory to Desktop
-10.Change Directory to Data folder inside WeatherChecker folder
+10.Change Directory to Data folder inside WeatherChecker folder<br/>
 	a. Type: cd WeatherChecker/Project/Data
-11. Run sql file
-	a. Type: psql
-	b. Type: \i user.sql;
+11. Run sql file<br/>
+	a. Type: psql<br/>
+	b. Type: \i user.sql;<br/>
 	c. Type: \q
-12. Change Directory to View folder inside WeatherChecker folder
+12. Change Directory to View folder inside WeatherChecker folder<br/>
 	a. Type: cd ../View
-13. Run Program
+13. Run Program<br/>
 	a. Type: python WeatherChecker_UI.py
 
 
