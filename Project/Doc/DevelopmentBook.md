@@ -487,7 +487,7 @@ if __name__ == "__main__":
 2. Unzip it and place it on the desktop
 3. Open terminal
 4. Create a new user for postgres sql
-	a. Type: sudo su postgres
+        a. Type: sudo su postgres
 	b. Type: createuser --interactive --pwprompt
 	c. Enter “user1” for username
 	d. Enter “password1 for password”
