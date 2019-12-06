@@ -289,7 +289,7 @@ def search():
 		cloundDescriptionLabel.config(text="Cloud Description: "+data[5])
 		searchLabel.config(text="")	
 		searchWeather = True
-		print(user.viewUserHistory())
+		##print(user.viewUserHistory())
 	else:
 		searchLabel.config(text="Invalidate input!",foreground="red")
 		currentTempLabel.config(text="Current Temperature: X F")
@@ -356,6 +356,14 @@ cloundDescriptionLabel.place(x=330, y=290)
 searchLabel = Label(main, text="", font=("Helvetica", 12))
 searchLabel.place(anchor=CENTER, x=300, y=340)
 
+cityRadio = Radiobutton(main, text="City Name", value=1)
+cityRadio.place(anchor=CENTER, x=156, y=195)
+
+zipRadio = Radiobutton(main, text="Zip Code", value=2)
+zipRadio.place(anchor=CENTER, x=253, y=195)
+
+gcRadio = Radiobutton(main, text="Geographic Coordinates", value=3)
+gcRadio.place(anchor=CENTER, x=396, y=195)
 
 
 main.mainloop()

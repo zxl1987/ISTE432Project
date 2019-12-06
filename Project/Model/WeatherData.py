@@ -7,7 +7,9 @@ sys.path.append(parent_dir)
 from Data.apiData import *
 from adapterData import *
 from Model.UserData import *
+from Data.userInfo import *
 user=UserData
+userInfo=userInfo()
 
 class WeatherData:
     dataInfo = None
@@ -29,7 +31,9 @@ class WeatherData:
             if '400' in data['cod']:
                 self.weatherInfo = "Geographic coordinates not found. Please re-enter."
         else:
-	    user.saveHistory(self,option,city)
+	    if userInfo.getUserid():{
+	  	  user.saveHistory(self,option,city)
+	    }
             minTemp = (int(data['main']['temp_min']) - 273.15) * 9 / 5 + 32
             maxTemp = (int(data['main']['temp_max']) - 273.15) * 9 / 5 + 32
             temp = (int(data['main']['temp']) - 273.15) * 9 / 5 + 32
