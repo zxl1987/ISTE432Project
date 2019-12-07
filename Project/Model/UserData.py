@@ -27,10 +27,12 @@ class UserData:
             return ("Invalid Email")
         signup = getDB.setUser(username, password, email)
         if signup:
-	    return True
-	else:
+            return True
+        else:
             return False
-	
+
+
+
     '''----------------------------------------------------------New Function-------------------------------------------------------------------------------------------------'''
     '''Get a list of User Information '''
     def viewUserInformation(self):
@@ -41,10 +43,10 @@ class UserData:
         if birth=="":
             birth="Infinity"
         if getDB.viewUserInfo(str(userInfo.getUserid())):
-            result= getDB.updateInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
+            result = getDB.updateInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
         else:
-            resukt= getDB.setUserInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
-	return result
+            result = getDB.setUserInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
+        return result
 
     '''Get a list of User History'''
     def viewUserHistory(self):
@@ -59,8 +61,20 @@ class UserData:
         return getDB.setUserHistory(str(userInfo.getUserid()), type, location)
 
     def getUserEmail(self):
-	return getDB.getUserEmail(str(userInfo.getUserid()))
-	
+        return getDB.getUserEmail(str(userInfo.getUserid()))
 
-   
-	
+    def changeUserPassword(self, newP, oldP):
+        print getDB.getUserpassword(str(userInfo.getUserid()))[0][0]
+        if oldP != getDB.getUserpassword(str(userInfo.getUserid()))[0][0]:
+            return "The password not found for old password! Please type again"
+        else:
+            return getDB.updateUserPassword(str(userInfo.getUserid()), newP)
+
+    def changeUserEmail(self, newE):
+        regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
+        if (not re.search(regex, newE)):
+            return ("Invalid Email")
+        if getDB.changeEmail(newE, str(userInfo.getUserid())):
+            return "Email update success!"
+        else:
+            return "Email fail to update!"

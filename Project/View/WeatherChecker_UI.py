@@ -5,6 +5,7 @@ parent_dir = (os.path.abspath(os.path.join(cwd, os.pardir)))
 sys.path.append(parent_dir)
 
 from Tkinter import *
+import Tkinter as tk
 from Model.UserData import *
 from Model.WeatherData import *
 from Model.handleException import *
@@ -12,8 +13,8 @@ from Model.Reminder import *
 login = None
 user = UserData()
 searchWeather = False
-
-
+global localoption
+localoption=1
 def restart_program():
     python = sys.executable
     os.execl(python, python, * sys.argv)
@@ -185,28 +186,28 @@ def editProfile():
 		
 	firstnameTextField = Text(profile)
 	firstnameTextField.place(x=150, y=30, height=25, width=200)
-	firstnameTextField.insert(END,str(user.viewUserInformation()[0][1]))
+	if user.viewUserInformation(): firstnameTextField.insert(END,str(user.viewUserInformation()[0][1]))
 
 	lastnameLabel = Label(profile, text="Last Name", font=("Helvetica", 12))
 	lastnameLabel.place(x=60, y=72)
 	
 	lastnameTextField = Text(profile)
 	lastnameTextField.place(x=150, y=72, height=25, width=200)
-        lastnameTextField.insert(END,str(user.viewUserInformation()[0][2]))
+	if user.viewUserInformation(): lastnameTextField.insert(END, str(user.viewUserInformation()[0][2]))
 
 	birthdayLabel = Label(profile, text="Birthday", font=("Helvetica", 12))
 	birthdayLabel.place(x=60, y=114)
 	
 	birthdayTextField = Text(profile)
 	birthdayTextField.place(x=150, y=114, height=25, width=200)
-	birthdayTextField.insert(END,str(user.viewUserInformation()[0][3]))
+	if user.viewUserInformation(): birthdayTextField.insert(END,str(user.viewUserInformation()[0][3]))
 
 	addressLabel = Label(profile, text="Address", font=("Helvetica", 12))
 	addressLabel.place(x=60, y=156)
 	
 	addressTextField = Text(profile)
 	addressTextField.place(x=150, y=156, height=25, width=200)
-	addressTextField.insert(END,str(user.viewUserInformation()[0][4]))
+	if user.viewUserInformation(): addressTextField.insert(END,str(user.viewUserInformation()[0][4]))
 
 	saveButton = Button(profile, text="Save",command=saveProfile)
 	saveButton.place(anchor=CENTER, x=200, y=228, height=25, width=80)
@@ -275,11 +276,11 @@ def search():
 	global cloundDescriptionLabel
 	global searchLabel
 	global searchWeather
+	global localoption
 	cityName = locationTextField.get("1.0", 'end-1c')
-	option = 1
-	handleError = handleException(option, cityName)
+	handleError = handleException(localoption, cityName)
 	if handleError.inputError():
-		info = WeatherData(option, cityName)
+		info = WeatherData(localoption, cityName)
 		data = info.getWeatherInfo()
 		currentTempLabel.config(text="Current Temperature: "+str(data[3])+" F")
 		lowestTempLabel.config(text="Lowest Temperature: "+str(data[1])+" F")
@@ -356,14 +357,29 @@ cloundDescriptionLabel.place(x=330, y=290)
 searchLabel = Label(main, text="", font=("Helvetica", 12))
 searchLabel.place(anchor=CENTER, x=300, y=340)
 
-cityRadio = Radiobutton(main, text="City Name", value=1)
-cityRadio.place(anchor=CENTER, x=156, y=195)
+address = [
+    ("City Name", 1),
+    ("Zip Code", 2),
+    ("Geographic Coordinates", 3),
+]
 
-zipRadio = Radiobutton(main, text="Zip Code", value=2)
-zipRadio.place(anchor=CENTER, x=253, y=195)
+def ShowChoice(text, v):
+	global localoption
+	localoption=v.get()
 
-gcRadio = Radiobutton(main, text="Geographic Coordinates", value=3)
-gcRadio.place(anchor=CENTER, x=396, y=195)
+varaddress = IntVar()
+varaddress.set(address[0][1])
+
+locationcode=156
+for txt, val in address:
+	Radio = Radiobutton(main, text=txt, variable=varaddress, value=val,
+						command=lambda t=txt, v=varaddress: ShowChoice(t, v)).place(anchor=CENTER, x=locationcode, y=195)
+	locationcode+=140
+
+
+
+
+
 
 
 main.mainloop()
