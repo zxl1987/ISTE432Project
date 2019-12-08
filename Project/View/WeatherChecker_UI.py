@@ -5,7 +5,7 @@ parent_dir = (os.path.abspath(os.path.join(cwd, os.pardir)))
 sys.path.append(parent_dir)
 
 from Tkinter import *
-import Tkinter as tk
+import ttk
 from Model.UserData import *
 from Model.WeatherData import *
 from Model.handleException import *
@@ -145,17 +145,15 @@ def checklogin():
 		setButton = Button(main, text="Set", command = setReminder)
 		setButton.place(anchor=CENTER, x=950, y=138, height=25, width=60)
 
-		historyLabel = Label(main, text="Search History", font=("Times", 12))
-		historyLabel.place(x=550, y=200)
+		variable = StringVar(main)
+		variable.set("one")  # default value
+		global historyChosen
+		historyChosen = ttk.Combobox(main, textvariable=variable,
+						 values=user.viewUserHistory())
+		historyChosen.bind("<<ComboboxSelected>>", callback)
+		historyChosen.pack()
+		historyChosen.place(x=600, y=230, height=25, width=300)
 
-		historyTextField = Text(main)
-		historyTextField.place(x=600, y=230, height=100, width=300)
-
-		scrollbar = Scrollbar(historyTextField)
-		scrollbar.pack(side=RIGHT, fill=Y)
-
-		historyTextField.config(yscrollcommand=scrollbar.set)
-		scrollbar.config(command=historyTextField.yview)
 
 		historyClear = Button(main, text="Clear")
 		historyClear.place(anchor=CENTER, x=950, y=270, height=25, width=60)
@@ -170,6 +168,11 @@ def checklogin():
 		editButton = Button(main, text="Edit Profile", bg='#cceeff', command=editProfile)
 		editButton.place(x=10, y=25, height=20, width=100)
 
+def callback(eventObject):
+	locationTextField.delete("1.0", 'end-1c')
+	locationTextField.insert('end-1c', historyChosen.get())
+	global localoption
+	search()
 
 def editProfile():
 	global firstnameTextField;
@@ -279,9 +282,9 @@ def search():
 	global localoption
 	cityName = locationTextField.get("1.0", 'end-1c')
 	handleError = handleException(localoption, cityName)
-	if handleError.inputError():
-		info = WeatherData(localoption, cityName)
-		data = info.getWeatherInfo()
+	info = WeatherData(localoption, cityName)
+	data = info.getWeatherInfo()
+	if handleError.inputError() and type(data) ==list:
 		currentTempLabel.config(text="Current Temperature: "+str(data[3])+" F")
 		lowestTempLabel.config(text="Lowest Temperature: "+str(data[1])+" F")
 		highestTempLabel.config(text="Highest Temperature: "+str(data[2])+" F")
@@ -298,7 +301,7 @@ def search():
 		highestTempLabel.config(text="Highest Temperature: X F")
 		windSpeedLabel.config(text="Wind Speed: X m/h")
 		cloudPrecentageLabel.config(text="Humidity: X%")
-		cloundDescriptionLabel.config(text="Cloud Description: X")	
+		cloundDescriptionLabel.config(text="Cloud Description: X")
 		searchWeather = False
 
 		

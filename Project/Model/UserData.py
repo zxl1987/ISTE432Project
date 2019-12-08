@@ -50,7 +50,13 @@ class UserData:
 
     '''Get a list of User History'''
     def viewUserHistory(self):
-        return getDB.getUserHistory(str(userInfo.getUserid()))
+        historylist=[]
+        for a in getDB.getUserHistory(str(userInfo.getUserid())):
+            historylist.append(a[3])
+        return historylist
+
+
+
 
     '''Delete a list of '''
     def deleteHisiotry(self, historyId):
