@@ -1,5 +1,8 @@
 import sys
 import os, subprocess 
+import threading
+import time
+import datetime as dt
 cwd = os.getcwd()
 parent_dir = (os.path.abspath(os.path.join(cwd, os.pardir)))
 sys.path.append(parent_dir)
@@ -10,36 +13,69 @@ from Model.UserData import *
 from Model.WeatherData import *
 from Model.handleException import *
 from Model.Reminder import *
+from Model.SignUpEmail import *
+main = Tk()
+emailTimerController = True
 login = None
 user = UserData()
 searchWeather = False
 global localoption
 localoption=1
+reminderArr = []
 def restart_program():
     python = sys.executable
     os.execl(python, python, * sys.argv)
 
+def setReminderEmail():
+	global searchWeather
+	global locationTextField
+
+	option = 1
+	cityName = locationTextField.get("1.0", 'end-1c')
+	info = WeatherData(option, cityName)
+	data = info.getWeatherInfo()
+	msg = "Weather for "+cityName+"\n\n"
+	msg += "Current Temperature: "+str(data[3])+" F\n"
+	msg += "Lowest Temperature: "+str(data[1])+" F\n"
+	msg += "Highest Temperature: "+str(data[2])+" F\n"
+	msg += "Wind Speed: "+str(data[4])+" m/h\n"
+	msg += "Humidity: "+str(data[6])+"%\n"
+	msg += "Cloud Description: "+data[5]
+
+	if searchWeather == True:
+		email = user.getUserEmail()[0][0]
+		sendReminder(email,msg)
+	else:
+		print 'no'
+
 def setReminder():
-    global searchWeather
-    global locationTextField
-    option = 1
-    cityName = locationTextField.get("1.0", 'end-1c')
-    info = WeatherData(option, cityName)
-    data = info.getWeatherInfo()
-    msg = "Weather for "+cityName+"\n\n"
-    msg += "Current Temperature: "+str(data[3])+" F\n"
-    msg += "Lowest Temperature: "+str(data[1])+" F\n"
-    msg += "Highest Temperature: "+str(data[2])+" F\n"
-    msg += "Wind Speed: "+str(data[4])+" m/h\n"
-    msg += "Cloud Percentage: X%\n"
-    msg += "Cloud Description: "+data[5]
+    global dateTextField
+    global timeTextField
+
+    time = dateTextField.get("1.0", 'end-1c') + " " + timeTextField.get("1.0", 'end-1c')
+    reminderTime = dt.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+
+    reminderArr.append(reminderTime)
 
 
-    if searchWeather == True:
-    	email = user.getUserEmail()[0][0]
-    	sendReminder(email,msg)
-    else:
-	print 'no'
+def emailTimer():
+	global emailTimerController
+	while(emailTimerController):
+		time.sleep(1)
+		now = dt.datetime.now()
+	
+		for emailTime in reminderArr:
+			if now >= emailTime:
+				setReminderEmail()
+				reminderArr.remove(emailTime)
+			
+def on_closing():
+	print "close"
+	global main, emailTimerController
+	emailTimerController = False
+	time.sleep(1.1)
+	main.destroy()
+
 
 def saveProfile():
     global firstnameTextField
@@ -97,6 +133,8 @@ def checklogin():
     	global passwordTextFieldLogin
         global loginLabel
 	global user
+	global dateTextField
+	global timeTextField
         loginCheck = user.verify(usernameTextFieldLogin.get("1.0", 'end-1c'),passwordTextFieldLogin.get("1.0", 'end-1c'))
    	if loginCheck == False: 
 		loginLabel.config(text='Wrong Username/Password',foreground="red")
@@ -265,6 +303,8 @@ def checkSignUp():
 	     signUpLabel.config(text=signUpCheck,foreground="red")
    	elif signUpCheck == True: 
 	     signUpLabel.config(text="Congratulations!",foreground="green")
+	     sendSignUpEmail(emailTextFieldSignUp.get("1.0", 'end-1c'))
+		
 
 def search():
 	global locationTextField
@@ -290,7 +330,6 @@ def search():
 		cloundDescriptionLabel.config(text="Cloud Description: "+data[5])
 		searchLabel.config(text="")	
 		searchWeather = True
-		##print(user.viewUserHistory())
 	else:
 		searchLabel.config(text="Invalidate input!",foreground="red")
 		currentTempLabel.config(text="Current Temperature: X F")
@@ -311,7 +350,6 @@ global windSpeedLabel
 global cloudPrecentageLabel
 global cloundDescriptionLabel
 global searchLabel
-main = Tk()
 main.title('Weather Checker')
 main.geometry("600x400+100+100")
 
@@ -377,7 +415,10 @@ for txt, val in address:
 	locationcode+=140
 
 
+t = threading.Thread(target=emailTimer)
+t.start()
 
+main.protocol("WM_DELETE_WINDOW",on_closing)
 
 
 
