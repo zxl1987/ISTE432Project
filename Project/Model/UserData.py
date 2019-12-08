@@ -72,15 +72,14 @@ class UserData:
     def changeUserPassword(self, newP, oldP):
         print getDB.getUserpassword(str(userInfo.getUserid()))[0][0]
         if oldP != getDB.getUserpassword(str(userInfo.getUserid()))[0][0]:
-            return "The password not found for old password! Please type again"
+            return False
         else:
             return getDB.updateUserPassword(str(userInfo.getUserid()), newP)
 
     def changeUserEmail(self, newE):
         regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
         if (not re.search(regex, newE)):
-            return ("Invalid Email")
-        if getDB.changeEmail(newE, str(userInfo.getUserid())):
-            return "Email update success!"
-        else:
-            return "Email fail to update!"
+            return False
+        return getDB.changeEmail(newE, str(userInfo.getUserid()))
+
+
