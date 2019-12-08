@@ -29,10 +29,9 @@ def restart_program():
 def setReminderEmail():
 	global searchWeather
 	global locationTextField
-
-	option = 1
+	global localoption
 	cityName = locationTextField.get("1.0", 'end-1c')
-	info = WeatherData(option, cityName)
+	info = WeatherData(localoption, cityName)
 	data = info.getWeatherInfo()
 	msg = "Weather for "+cityName+"\n\n"
 	msg += "Current Temperature: "+str(data[3])+" F\n"
@@ -83,6 +82,7 @@ def saveProfile():
     global birthdayTextField
     global addressTextField
     global profileLabel
+    global emailTextField
     print(user.setInformation(firstnameTextField.get("1.0", 'end-1c'),
 			lastnameTextField.get("1.0", 'end-1c'),
 			birthdayTextField.get("1.0", 'end-1c'),
@@ -90,10 +90,27 @@ def saveProfile():
     if not user.setInformation(firstnameTextField.get("1.0", 'end-1c'),
 			lastnameTextField.get("1.0", 'end-1c'),
 			birthdayTextField.get("1.0", 'end-1c'),
-			addressTextField.get("1.0", 'end-1c')):
+			addressTextField.get("1.0", 'end-1c')): 
 	profileLabel.config(text='Invalid input',foreground="red")
+    elif user.changeUserEmail(emailTextField.get("1.0", 'end-1c')) != True:
+	profileLabel.config(text='Invalid email',foreground="red")
     else:
 	profileLabel.config(text='Saved',foreground="green")
+
+def savePassword():
+	global currentPasswordTextField
+	global newPasswordTextField
+	global confirmPasswordTextField
+	global passwordLabel	
+	print 'hi'
+	
+	if confirmPasswordTextField.get("1.0", 'end-1c')!=newPasswordTextField.get("1.0", 'end-1c'):
+		passwordLabel.config(text='Password not match',foreground="red")
+	elif user.changeUserPassword(newPasswordTextField.get("1.0", 'end-1c'),currentPasswordTextField.get("1.0", 'end-1c')) != True:
+		passwordLabel.config(text='Incorrect Password',foreground="red")
+	
+        else:
+		passwordLabel.config(text='Password Changed',foreground="green")
 
 def loginUI():
     global login
@@ -202,22 +219,27 @@ def checklogin():
 			userWelcomeMsg = "Welcome"
 		else:
 			userWelcomeMsg = "Welcome " + str(user.viewUserInformation()[0][1])
+		
 		userWelcomeLabel = Label(main, text=userWelcomeMsg, font=("Helvetica", 12))
 		userWelcomeLabel.place(x=10, y=2)
 		
-		editButton = Button(main, text="Edit Profile", bg='#cceeff', command=editProfile)
+		editButton = Button(main, text="Edit Profile", bg='#cceeff', command=editProfileUI)
 		editButton.place(x=10, y=25, height=20, width=100)
+	
+		changePasswordButton = Button(main, text="Change Password", bg='#cceeff', command=changePasswordUI)
+		changePasswordButton.place(x=10, y=45, height=20, width=130)
 
 
-def editProfile():
-	global firstnameTextField;
-	global lastnameTextField;
-	global birthdayTextField;
-	global addressTextField;
-        global profileLabel;
+def editProfileUI():
+	global firstnameTextField
+	global lastnameTextField
+	global birthdayTextField
+	global addressTextField
+        global profileLabel
+	global emailTextField
 	profile = Tk()
 	profile.title('Profile')
-	profile.geometry("400x270+200+130")
+	profile.geometry("400x300+200+130")
 
 	firstnameLabel = Label(profile, text="First Name", font=("Helvetica", 12))
 	firstnameLabel.place(x=60, y=30)
@@ -247,13 +269,57 @@ def editProfile():
 	addressTextField.place(x=150, y=156, height=25, width=200)
 	if user.viewUserInformation(): addressTextField.insert(END,str(user.viewUserInformation()[0][4]))
 
+	emailLabel = Label(profile, text="Email", font=("Helvetica", 12))
+	emailLabel.place(x=60, y=198)
+	
+	emailTextField = Text(profile)
+	emailTextField.place(x=150, y=198, height=25, width=200)
+	emailTextField.insert(END,str(user.getUserEmail()[0][0]))
+	
+
 	saveButton = Button(profile, text="Save",command=saveProfile)
-	saveButton.place(anchor=CENTER, x=200, y=228, height=25, width=80)
+	saveButton.place(anchor=CENTER, x=200, y=270, height=25, width=80)
 
 	profileLabel = Label(profile, text="", font=("Helvetica", 12))
-    	profileLabel.place(anchor=CENTER, x=200, y=195)
+    	profileLabel.place(anchor=CENTER, x=200, y=240)
 
 	profile.mainloop()
+
+def changePasswordUI():
+	global currentPasswordTextField
+	global newPasswordTextField
+	global confirmPasswordTextField
+	global passwordLabel
+	
+	changePassword = Tk()
+	changePassword.title('Change Password')
+	changePassword.geometry("400x230+200+130")
+
+	currentPasswordLabel = Label(changePassword, text="Current Password", font=("Helvetica", 12))
+	currentPasswordLabel.place(x=30, y=30)
+
+	currentPasswordTextField = Text(changePassword)
+	currentPasswordTextField.place(x=170, y=30, height=25, width=200)
+
+	newPasswordLabel = Label(changePassword, text="New Password", font=("Helvetica", 12))
+	newPasswordLabel.place(x=30, y=72)
+
+	newPasswordTextField = Text(changePassword)
+	newPasswordTextField.place(x=170, y=72, height=25, width=200)
+
+	confirmPasswordLabel = Label(changePassword, text="Confirm Password", font=("Helvetica", 12))
+	confirmPasswordLabel.place(x=30, y=114)
+
+	confirmPasswordTextField = Text(changePassword)
+	confirmPasswordTextField.place(x=170, y=114, height=25, width=200)
+
+	passwordLabel = Label(changePassword, text="")
+	passwordLabel.place(anchor=CENTER, x=200, y=155)
+
+	SavePasswordButton = Button(changePassword, text="Save", command=savePassword)
+	SavePasswordButton.place(anchor=CENTER, x=200, y=180, height=25, width=80)
+
+	changePassword.mainloop()
 
 def signUpUI():
 	global usernameTextFieldSignUp
@@ -396,9 +462,9 @@ searchLabel = Label(main, text="", font=("Helvetica", 12))
 searchLabel.place(anchor=CENTER, x=300, y=340)
 
 address = [
-    ("City Name", 1),
-    ("Zip Code", 2),
-    ("Geographic Coordinates", 3),
+    ("City Name      ", 1),
+    ("Zip Code       ", 2),
+    ("Geo Coordinates", 3),
 ]
 
 def ShowChoice(text, v):
@@ -412,7 +478,7 @@ locationcode=156
 for txt, val in address:
 	Radio = Radiobutton(main, text=txt, variable=varaddress, value=val,
 						command=lambda t=txt, v=varaddress: ShowChoice(t, v)).place(anchor=CENTER, x=locationcode, y=195)
-	locationcode+=140
+	locationcode+=150
 
 
 t = threading.Thread(target=emailTimer)
