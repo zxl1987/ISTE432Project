@@ -3,9 +3,10 @@ conn = None
 class Database:
 	def connect(self):
 		try:
-			'''conn = psycopg2.connect(host='localhost', database='userinfo', port="1996", user='postgres',password='student')
+			conn = psycopg2.connect(host='localhost', database='userinfo', port="1996", user='postgres',password='student')
 			'''
 			conn = psycopg2.connect(host='localhost', database='userinfo', port = "5432", user="user1", password="password1")
+			'''
 			return conn
 		except (Exception, psycopg2.DatabaseError) as error:
 			print(error)
@@ -183,9 +184,9 @@ class Database:
 			cur.close()
 			conn.close()
 
-	def deleteUserHistory(self, userId, hisotry_id):
-		query = "DELETE FROM history where user_id = %s and history_id= %s;"
-		args = (userId, hisotry_id)
+	def deleteUserHistory(self, userId):
+		query = "DELETE FROM history where user_id = %s;"
+		args = (userId)
 		conn = self.connect()
 		try:
 			cur = conn.cursor()
@@ -198,6 +199,7 @@ class Database:
 		finally:
 			cur.close()
 			conn.close()
+
 	
 
 

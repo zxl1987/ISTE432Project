@@ -101,8 +101,7 @@ def savePassword():
 	global currentPasswordTextField
 	global newPasswordTextField
 	global confirmPasswordTextField
-	global passwordLabel	
-	print 'hi'
+	global passwordLabel
 	
 	if confirmPasswordTextField.get("1.0", 'end-1c')!=newPasswordTextField.get("1.0", 'end-1c'):
 		passwordLabel.config(text='Password not match',foreground="red")
@@ -139,8 +138,6 @@ def loginUI():
 
     loginTo = Button(login, text="Login", command=checklogin)
     loginTo.place(anchor=CENTER, x=200, y=150, height=25, width=80)
-
-    
 
     login.mainloop()
 
@@ -199,18 +196,8 @@ def checklogin():
 
 		setButton = Button(main, text="Set", command = setReminder)
 		setButton.place(anchor=CENTER, x=950, y=138, height=25, width=60)
-
-		variable = StringVar(main)
-		variable.set("one")  # default value
-		global historyChosen
-		historyChosen = ttk.Combobox(main, textvariable=variable,
-						 values=user.viewUserHistory())
-		historyChosen.bind("<<ComboboxSelected>>", callback)
-		historyChosen.pack()
-		historyChosen.place(x=600, y=230, height=25, width=300)
-
-
-		historyClear = Button(main, text="Clear")
+		updateHistoryList()
+		historyClear = Button(main, text="Clear", command=clear)
 		historyClear.place(anchor=CENTER, x=950, y=270, height=25, width=60)
 		
 		if not user.viewUserInformation():
@@ -227,10 +214,27 @@ def checklogin():
 		changePasswordButton = Button(main, text="Change Password", bg='#cceeff', command=changePasswordUI)
 		changePasswordButton.place(x=10, y=45, height=20, width=130)
 
+
+def clear():
+	user.deleteHisiotry()
+	updateHistoryList()
+def updateHistoryList():
+	variable = StringVar(main)
+	variable.set("one")  # default value
+	global historyChosen
+	global number2
+	historyChosen = ttk.Combobox(main, textvariable="variable", values=user.viewUserHistory())
+	historyChosen.bind("<<ComboboxSelected>>", callback)
+	historyChosen.pack()
+	historyChosen.place(x=600, y=230, height=25, width=300)
+
+
 def callback(eventObject):
 	locationTextField.delete("1.0", 'end-1c')
 	locationTextField.insert('end-1c', historyChosen.get())
 	global localoption
+	localoption=user.getOption(historyChosen.get())
+
 	search()
 
 def editProfileUI():
@@ -397,7 +401,9 @@ def search():
 		windSpeedLabel.config(text="Wind Speed: "+str(data[4])+" m/h")
 		cloudPrecentageLabel.config(text="Humidity: "+str(data[6])+"%")
 		cloundDescriptionLabel.config(text="Cloud Description: "+data[5])
-		searchLabel.config(text="")	
+		searchLabel.config(text="")
+		user.saveHistory(localoption, cityName)
+		updateHistoryList()
 		searchWeather = True
 	else:
 		searchLabel.config(text="Invalidate input!",foreground="red")

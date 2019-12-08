@@ -51,20 +51,27 @@ class UserData:
     '''Get a list of User History'''
     def viewUserHistory(self):
         historylist=[]
-        for a in getDB.getUserHistory(str(userInfo.getUserid())):
-            historylist.append(a[3])
-        return historylist
+        if userInfo.getUserid():
+            for a in getDB.getUserHistory(str(userInfo.getUserid())):
+                historylist.append(a[3])
+            return historylist
 
+    def getOption(self, cityname):
+        if userInfo.getUserid():
+            for a in getDB.getUserHistory(str(userInfo.getUserid())):
+                if a[3]==cityname:
+                    return a[2]
 
 
 
     '''Delete a list of '''
-    def deleteHisiotry(self, historyId):
-        return getDB.deleteUserHistory(str(userInfo.getUserid()), historyId)
-    
+    def deleteHisiotry(self):
+        return getDB.deleteUserHistory(str(userInfo.getUserid()))
+
     @staticmethod
-    def saveHistory(self, type, location):
-        return getDB.setUserHistory(str(userInfo.getUserid()), type, location)
+    def saveHistory(type, location):
+        if userInfo.getUserid():
+            return getDB.setUserHistory(str(userInfo.getUserid()), type, location)
 
     def getUserEmail(self):
         return getDB.getUserEmail(str(userInfo.getUserid()))
