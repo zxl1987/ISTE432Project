@@ -26,6 +26,8 @@ searchWeather = False
 localoption = 1
 reminderArr = []
 reminderCirculationArr = []
+global loginCheck
+loginCheck=False
 
 def restart_program():
 	python = sys.executable
@@ -201,15 +203,15 @@ def loginUI():
 
 
 def checklogin():
+	global loginCheck
     	global usernameTextFieldLogin, passwordTextFieldLogin, loginLabel, user, dateTextField, timeTextField, time2TextField, var, reminderMsgLabel, login
 
         loginCheck = user.verify(usernameTextFieldLogin.get("1.0", 'end-1c'),passwordTextFieldLogin.get())
-   	if loginCheck == False: 
+   	if loginCheck == False:
 		loginLabel.config(text='Wrong Username/Password',foreground="red")
-   	elif loginCheck == True: 
+   	elif loginCheck == True:
 		login.destroy()
 		main.geometry("1000x400+100+100")
-
 		loginButton.place(anchor=CENTER, x=830, y=20, height=25, width=80)
 		signupButton.place(anchor=CENTER, x=950, y=20, height=25, width=80)
 		orLabel.place(x=880, y=10)
@@ -282,7 +284,7 @@ def clear():
 	updateHistoryList()
 
 def updateHistoryList(): 
-	global historyChosen, number2
+	global historyChosen
 
 	variable = StringVar(main)
 	variable.set("one")
@@ -435,19 +437,30 @@ def search():
 
 	cityName = locationTextField.get("1.0", 'end-1c')
 	handleError = handleException(localoption, cityName)
-	info = WeatherData(localoption, cityName)
-	data = info.getWeatherInfo()
-	if handleError.inputError() and type(data) ==list:
-		currentTempLabel.config(text="Current Temperature: "+str(data[3])+" F")
-		lowestTempLabel.config(text="Lowest Temperature: "+str(data[1])+" F")
-		highestTempLabel.config(text="Highest Temperature: "+str(data[2])+" F")
-		windSpeedLabel.config(text="Wind Speed: "+str(data[4])+" m/h")
-		cloudPrecentageLabel.config(text="Humidity: "+str(data[6])+"%")
-		cloundDescriptionLabel.config(text="Cloud Description: "+data[5])
-		searchLabel.config(text="")
-		user.saveHistory(localoption, cityName)
-		updateHistoryList()
-		searchWeather = True
+	if handleError.inputError():
+		info = WeatherData(localoption, cityName)
+		data = info.getWeatherInfo()
+		if type(data) == list:
+			currentTempLabel.config(text="Current Temperature: " + str(data[3]) + " F")
+			lowestTempLabel.config(text="Lowest Temperature: " + str(data[1]) + " F")
+			highestTempLabel.config(text="Highest Temperature: " + str(data[2]) + " F")
+			windSpeedLabel.config(text="Wind Speed: " + str(data[4]) + " m/h")
+			cloudPrecentageLabel.config(text="Humidity: " + str(data[6]) + "%")
+			cloundDescriptionLabel.config(text="Cloud Description: " + data[5])
+			searchLabel.config(text="")
+			user.saveHistory(localoption, cityName)
+			if loginCheck:
+				updateHistoryList()
+			searchWeather = True
+		else:
+			searchLabel.config(text="Invalidate input!", foreground="red")
+			currentTempLabel.config(text="Current Temperature: X F")
+			lowestTempLabel.config(text="Lowest Temperature: X F")
+			highestTempLabel.config(text="Highest Temperature: X F")
+			windSpeedLabel.config(text="Wind Speed: X m/h")
+			cloudPrecentageLabel.config(text="Humidity: X%")
+			cloundDescriptionLabel.config(text="Cloud Description: X")
+			searchWeather = False
 	else:
 		searchLabel.config(text="Invalidate input!",foreground="red")
 		currentTempLabel.config(text="Current Temperature: X F")
@@ -457,6 +470,7 @@ def search():
 		cloudPrecentageLabel.config(text="Humidity: X%")
 		cloundDescriptionLabel.config(text="Cloud Description: X")
 		searchWeather = False
+
 
 		
 

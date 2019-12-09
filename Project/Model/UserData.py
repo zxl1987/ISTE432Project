@@ -8,12 +8,16 @@ class UserData:
 
 
     def verify(self, username, password):
-        verifyUser = getDB.authUser(username, self.hash_password(password))
-        if self.verify_password(verifyUser[0][1], password):
-            userInfo.setUserid(verifyUser[0][0])
-            return True
+        if getDB.authUser(username, self.hash_password(password)):
+            verifyUser=getDB.authUser(username, self.hash_password(password))
+            if self.verify_password(verifyUser[0][1], password):
+                userInfo.setUserid(verifyUser[0][0])
+                return True
+            else:
+                return False
         else:
             return False
+
 
     def signUp(self, username, password, email):
         regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
