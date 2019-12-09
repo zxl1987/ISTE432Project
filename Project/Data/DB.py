@@ -3,10 +3,11 @@ conn = None
 class Database:
 	def connect(self):
 		try:
-			'''
+
 			conn = psycopg2.connect(host='localhost', database='userinfo', port="1996", user='postgres',password='student')
 			'''
 			conn = psycopg2.connect(host='localhost', database='userinfo', port = "5432", user="user1", password="password1")
+			'''
 			return conn
 		except (Exception, psycopg2.DatabaseError) as error:
 			print(error)
@@ -16,7 +17,7 @@ class Database:
 		conn=self.connect()
 		try:
 			cur = conn.cursor()
-			cur.execute("select user_id from users where username='"+username+"' and password='"+password+"';")
+			cur.execute("select user_id, password from users where username='"+username+"';")
 			result = cur.fetchall()
 			return result
 		except (Exception, psycopg2.DatabaseError) as error:

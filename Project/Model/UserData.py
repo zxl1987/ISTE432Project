@@ -1,13 +1,15 @@
 from Data.DB import *
 from Data.userInfo import *
+import hashlib, binascii, os
 import re
 getDB=Database()
 userInfo=userInfo()
 class UserData:
 
+
     def verify(self, username, password):
-        verifyUser = getDB.authUser(username, password)
-        if verifyUser:
+        verifyUser = getDB.authUser(username, self.hash_password(password))
+        if self.verify_password(verifyUser[0][1], password):
             userInfo.setUserid(verifyUser[0][0])
             return True
         else:
@@ -25,7 +27,7 @@ class UserData:
         regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
         if (not re.search(regex, email)):
             return ("Invalid Email")
-        signup = getDB.setUser(username, password, email)
+        signup = getDB.setUser(username, self.hash_password(password), email)
         if signup:
             return True
         else:
@@ -69,13 +71,32 @@ class UserData:
         return getDB.getUserEmail(str(userInfo.getUserid()))
 
     def changeUserPassword(self, newP, oldP):
-        if oldP != getDB.getUserpassword(str(userInfo.getUserid()))[0][0]: return False
+        if not self.verify_password(getDB.getUserpassword(str(userInfo.getUserid()))[0][0], oldP):
+            print "heelo"
+            return False
         else:
-            return getDB.updateUserPassword(str(userInfo.getUserid()), newP)
+            return getDB.updateUserPassword(str(userInfo.getUserid()), self.hash_password(newP))
 
     def changeUserEmail(self, newE):
         regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
         if (not re.search(regex, newE)): return False
         return getDB.changeEmail(newE, str(userInfo.getUserid()))
 
+    def hash_password(self, password):
+        """Hash a password for storing."""
+        salt = hashlib.sha256(os.urandom(60)).hexdigest().encode('ascii')
+        pwdhash = hashlib.pbkdf2_hmac('sha512', password.encode('utf-8'),
+                                      salt, 100000)
+        pwdhash = binascii.hexlify(pwdhash)
+        return (salt + pwdhash).decode('ascii')
 
+    def verify_password(self, password, userinput):
+        """Verify a stored password against one provided by user"""
+        salt = password[:64]
+        stored_password = password[64:]
+        pwdhash = hashlib.pbkdf2_hmac('sha512',
+                                      userinput.encode('utf-8'),
+                                      salt.encode('ascii'),
+                                      100000)
+        pwdhash = binascii.hexlify(pwdhash).decode('ascii')
+        return pwdhash == stored_password
