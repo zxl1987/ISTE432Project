@@ -7,6 +7,7 @@ class handleException:
         self.userInput = userInput
         self.inputError
 
+
     def inputError(self):
         ## Handle error if user enter city name
         if self.option == 1:
@@ -19,6 +20,7 @@ class handleException:
                 return True
             else:
                 return False
+
         ## Handle error if user enter zip code
         if self.option == 2:
             if ',' in self.userInput:
@@ -36,6 +38,8 @@ class handleException:
                 except:
                     return False
             return True
+	
+	## Handle error if user enter gen coordinates
         if self.option == 3:
             if ',' in self.userInput:
                 process = self.userInput.replace(' ', '')
@@ -48,7 +52,5 @@ class handleException:
             else:
                 return False
             return True
-
-
 
 

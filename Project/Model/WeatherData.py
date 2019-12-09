@@ -21,6 +21,7 @@ class WeatherData:
         self.dataInfo = adapter
         self.processData(option,city)
 
+
     def processData(self,option,city):
         data = self.dataInfo.allData()
         if 'message' in data:
@@ -39,6 +40,7 @@ class WeatherData:
             temp = (int(data['main']['temp']) - 273.15) * 9 / 5 + 32
             humidity=int(data['main']['humidity'])
             self.weatherInfo = [data['name'], round(minTemp, 2), round(maxTemp, 2), round(temp, 2), data['wind']['speed'], data['weather'][0]['description'], humidity]
+
 
     def getWeatherInfo(self):
         return self.weatherInfo

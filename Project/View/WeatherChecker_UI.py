@@ -3,34 +3,38 @@ import os, subprocess
 import threading
 import time
 import datetime as dt
+from Tkinter import *
+import ttk
+
 cwd = os.getcwd()
 parent_dir = (os.path.abspath(os.path.join(cwd, os.pardir)))
 sys.path.append(parent_dir)
 
-from Tkinter import *
-import ttk
 from Model.UserData import *
 from Model.WeatherData import *
 from Model.handleException import *
 from Model.Reminder import *
 from Model.SignUpEmail import *
+
 main = Tk()
+user = UserData()
+global localoption 
 emailTimerController = True
 emailTimerCirculationController = True
 login = None
-user = UserData()
 searchWeather = False
-global localoption
-localoption=1
+localoption = 1
 reminderArr = []
 reminderCirculationArr = []
+
 def restart_program():
-    python = sys.executable
-    os.execl(python, python, * sys.argv)
+	python = sys.executable
+	os.execl(python, python, * sys.argv)
+
 
 def setReminderEmail(option,cityName):
-		
 	global reminderMsgLabel
+
 	info = WeatherData(option, cityName)
 	data = info.getWeatherInfo()
 	msg = "Weather for "+cityName+"\n\n"
@@ -42,23 +46,18 @@ def setReminderEmail(option,cityName):
 	msg += "Cloud Description: "+data[5]
 
 	email = user.getUserEmail()[0][0]
-	if sendReminder(email,msg):
-		reminderMsgLabel.config(text='Reminder set completed.',foreground="green")
+	if sendReminder(email, msg): reminderMsgLabel.config(text='Reminder set completed.',foreground="green")
 
 	
 def setReminder1():
-	global dateTextField
-	global timeTextField
-	global reminderMsgLabel
-	global locationTextField
-	global localoption
+	global dateTextField, timeTextField, reminderMsgLabel, locationTextField, localoptions
+
 	try:
 		time = dateTextField.get("1.0", 'end-1c') + " " + timeTextField.get("1.0", 'end-1c')
 		reminderTime = dt.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
 	except:
 		reminderMsgLabel.config(text='Date/Time Incorrect in format\nyyyy-mm-dd hh:mm:ss.',foreground="red")
 		return
-
 
 	if searchWeather == True:
 		cityName = locationTextField.get("1.0", 'end-1c')
@@ -73,14 +72,9 @@ def setReminder1():
 		return
 	
 
-    
-
 def setReminder2():
-    	global time2TextField
-	global var 
-	global locationTextField
-	global localoption
-	global reminderMsgLabel
+    	global time2TextField, locationTextField, localoption, reminderMsgLabel, var
+
 	cityName = locationTextField.get("1.0", 'end-1c')
 	day = var.get()
 	dayNum = ''
@@ -93,8 +87,6 @@ def setReminder2():
 	elif day == 'Sunday': dayNum = 6 
 	elif day == 'Everyday': dayNum = 7
 
-	
-
 	try:
 		time = time2TextField.get("1.0", 'end-1c')		
 		reminderTime = dt.datetime.strptime(time, '%H:%M:%S')
@@ -102,23 +94,22 @@ def setReminder2():
 		reminderMsgLabel.config(text='Time Incorrect in format\nhh:mm:ss.',foreground="red")
 		return
 	
-
 	if searchWeather == True:
-		arr = []
-		arr.append(localoption)
-		arr.append(cityName)
-		arr.append(dayNum)
-		arr.append(time)
-		reminderCirculationArr.append(arr)
+		searchArr = []
+		searchArr.append(localoption)
+		searchArr.append(cityName)
+		searchArr.append(dayNum)
+		searchArr.append(time)
+		reminderCirculationArr.append(searchArr)
 		reminderMsgLabel.config(text='Reminder Set!',foreground="green")
 	else:
 		reminderMsgLabel.config(text='Please Search first.',foreground="red")
 		return
 	
 
-
 def emailTimer():
 	global emailTimerController
+	
 	while(emailTimerController):
 		time.sleep(1)
 		now = dt.datetime.now()
@@ -128,8 +119,10 @@ def emailTimer():
 				setReminderEmail(emailTime[0],emailTime[1])
 				reminderArr.remove(emailTime)
 
+
 def emailCirculationTimer():
 	global emailTimerCirculationController
+
 	while(emailTimerCirculationController):		
 		time.sleep(1)
 		now = dt.datetime.now()
@@ -144,10 +137,9 @@ def emailCirculationTimer():
 						setReminderEmail(emailTime[0],emailTime[1])
 					
 		
-		
 def on_closing():
-	print "close"
 	global main, emailTimerController, emailTimerCirculationController
+
 	emailTimerController = False
 	emailTimerCirculationController = False
 	time.sleep(1.1)
@@ -155,16 +147,8 @@ def on_closing():
 
 
 def saveProfile():
-    global firstnameTextField
-    global lastnameTextField
-    global birthdayTextField
-    global addressTextField
-    global profileLabel
-    global emailTextField
-    print(user.setInformation(firstnameTextField.get("1.0", 'end-1c'),
-			lastnameTextField.get("1.0", 'end-1c'),
-			birthdayTextField.get("1.0", 'end-1c'),
-			addressTextField.get("1.0", 'end-1c')))
+    global firstnameTextField, lastnameTextField, birthdayTextField, addressTextField, profileLabel, emailTextField
+
     if not user.setInformation(firstnameTextField.get("1.0", 'end-1c'),
 			lastnameTextField.get("1.0", 'end-1c'),
 			birthdayTextField.get("1.0", 'end-1c'),
@@ -175,11 +159,9 @@ def saveProfile():
     else:
 	profileLabel.config(text='Saved',foreground="green")
 
+
 def savePassword():
-	global currentPasswordTextField
-	global newPasswordTextField
-	global confirmPasswordTextField
-	global passwordLabel
+	global currentPasswordTextField, newPasswordTextField, confirmPasswordTextField, passwordLabel
 	
 	if confirmPasswordTextField.get("1.0", 'end-1c')!=newPasswordTextField.get("1.0", 'end-1c'):
 		passwordLabel.config(text='Password not match',foreground="red")
@@ -189,11 +171,9 @@ def savePassword():
         else:
 		passwordLabel.config(text='Password Changed',foreground="green")
 
+
 def loginUI():
-    global login
-    global usernameTextFieldLogin
-    global passwordTextFieldLogin
-    global loginLabel
+    global login, usernameTextFieldLogin, passwordTextFieldLogin, loginLabel
     
     login = Tk()
     login.title('Login')
@@ -221,21 +201,12 @@ def loginUI():
 
 
 def checklogin():
-    	global usernameTextFieldLogin
-    	global passwordTextFieldLogin
-        global loginLabel
-	global user
-	global dateTextField
-	global timeTextField
-	global time2TextField
-	global var
-	global reminderMsgLabel
+    	global usernameTextFieldLogin, passwordTextFieldLogin, loginLabel, user, dateTextField, timeTextField, time2TextField, var, reminderMsgLabel, login
+
         loginCheck = user.verify(usernameTextFieldLogin.get("1.0", 'end-1c'),passwordTextFieldLogin.get("1.0", 'end-1c'))
    	if loginCheck == False: 
 		loginLabel.config(text='Wrong Username/Password',foreground="red")
    	elif loginCheck == True: 
-	
-		global login
 		login.destroy()
 		main.geometry("1000x400+100+100")
 
@@ -281,7 +252,7 @@ def checklogin():
 		set2Button = Button(main, text="Set", command = setReminder2)
 		set2Button.place(x=920, y=150, height=25, width=60)
 
-		reminderMsgLabel = Label(main, text="1", font=("Times", 12))
+		reminderMsgLabel = Label(main, text="", font=("Times", 12))
 		reminderMsgLabel.place(anchor=CENTER, x=800, y=200)
 
 		historyLabel = Label(main, text="Search History", font=("Times", 12))
@@ -310,11 +281,11 @@ def clear():
 	user.deleteHisiotry()
 	updateHistoryList()
 
-def updateHistoryList():
+def updateHistoryList(): 
+	global historyChosen, number2
+
 	variable = StringVar(main)
-	variable.set("one")  # default value
-	global historyChosen
-	global number2
+	variable.set("one")
 	historyChosen = ttk.Combobox(main, textvariable="variable", values=user.viewUserHistory())
 	historyChosen.bind("<<ComboboxSelected>>", callback)
 	historyChosen.pack()
@@ -322,20 +293,17 @@ def updateHistoryList():
 
 
 def callback(eventObject):
+	global localoption
+
 	locationTextField.delete("1.0", 'end-1c')
 	locationTextField.insert('end-1c', historyChosen.get())
-	global localoption
 	localoption=user.getOption(historyChosen.get())
-
 	search()
 
+
 def editProfileUI():
-	global firstnameTextField
-	global lastnameTextField
-	global birthdayTextField
-	global addressTextField
-        global profileLabel
-	global emailTextField
+	global firstnameTextField, lastnameTextField,  birthdayTextField, addressTextField, profileLabel, emailTextField
+
 	profile = Tk()
 	profile.title('Profile')
 	profile.geometry("400x300+200+130")
@@ -385,10 +353,7 @@ def editProfileUI():
 	profile.mainloop()
 
 def changePasswordUI():
-	global currentPasswordTextField
-	global newPasswordTextField
-	global confirmPasswordTextField
-	global passwordLabel
+	global currentPasswordTextField, newPasswordTextField, confirmPasswordTextField, passwordLabel
 	
 	changePassword = Tk()
 	changePassword.title('Change Password')
@@ -420,11 +385,9 @@ def changePasswordUI():
 
 	changePassword.mainloop()
 
+
 def signUpUI():
-	global usernameTextFieldSignUp
-	global passwordTextFieldSignUp
-	global emailTextFieldSignUp
-	global signUpLabel
+	global usernameTextFieldSignUp, passwordTextFieldSignUp, emailTextFieldSignUp, signUpLabel
 
 	signUp = Tk()
 	signUp.title('Sign Up')
@@ -458,30 +421,18 @@ def signUpUI():
 
 
 def checkSignUp():
-	global user
-    	global usernameTextFieldSignUp
-	global passwordTextFieldSignUp
-	global emailTextFieldSignUp
-	global signUpLabel
+	global user, usernameTextFieldSignUp, passwordTextFieldSignUp, emailTextFieldSignUp, signUpLabel
+
         signUpCheck = user.signUp(usernameTextFieldSignUp.get("1.0", 'end-1c'),passwordTextFieldSignUp.get("1.0", 'end-1c'),emailTextFieldSignUp.get("1.0", 'end-1c'))
-   	if signUpCheck != True: 
-	     signUpLabel.config(text=signUpCheck,foreground="red")
+   	if signUpCheck != True: signUpLabel.config(text=signUpCheck,foreground="red")
    	elif signUpCheck == True: 
 	     signUpLabel.config(text="Congratulations!",foreground="green")
 	     sendSignUpEmail(emailTextFieldSignUp.get("1.0", 'end-1c'))
 		
 
 def search():
-	global locationTextField
-	global currentTempLabel
-	global lowestTempLabel
-	global highestTempLabel
-	global windSpeedLabel
-	global cloudPrecentageLabel
-	global cloundDescriptionLabel
-	global searchLabel
-	global searchWeather
-	global localoption
+	global locationTextField, currentTempLabel, lowestTempLabel, highestTempLabel, windSpeedLabel, cloudPrecentageLabel, cloundDescriptionLabel, searchLabel, searchWeather, localoption
+
 	cityName = locationTextField.get("1.0", 'end-1c')
 	handleError = handleException(localoption, cityName)
 	info = WeatherData(localoption, cityName)
@@ -509,14 +460,8 @@ def search():
 
 		
 
-global locationTextField
-global currentTempLabel
-global lowestTempLabel
-global highestTempLabel
-global windSpeedLabel
-global cloudPrecentageLabel
-global cloundDescriptionLabel
-global searchLabel
+global locationTextField, currentTempLabel, lowestTempLabel, highestTempLabel, windSpeedLabel, cloudPrecentageLabel, cloundDescriptionLabel, searchLabel
+
 main.title('Weather Checker')
 main.geometry("600x400+100+100")
 
@@ -562,11 +507,7 @@ cloundDescriptionLabel.place(x=330, y=290)
 searchLabel = Label(main, text="", font=("Helvetica", 12))
 searchLabel.place(anchor=CENTER, x=300, y=340)
 
-address = [
-    ("City Name      ", 1),
-    ("Zip Code       ", 2),
-    ("Geo Coordinates", 3),
-]
+address = [("City Name      ", 1),("Zip Code       ", 2),("Geo Coordinates", 3)]
 
 def ShowChoice(text, v):
 	global localoption
@@ -577,8 +518,7 @@ varaddress.set(address[0][1])
 
 locationcode=156
 for txt, val in address:
-	Radio = Radiobutton(main, text=txt, variable=varaddress, value=val,
-						command=lambda t=txt, v=varaddress: ShowChoice(t, v)).place(anchor=CENTER, x=locationcode, y=195)
+	Radio = Radiobutton(main, text=txt, variable=varaddress, value=val,command=lambda t=txt, v=varaddress: ShowChoice(t, v)).place(anchor=CENTER, x=locationcode, y=195)
 	locationcode+=150
 
 
@@ -589,10 +529,6 @@ t2 = threading.Thread(target=emailCirculationTimer)
 t2.start()
 
 main.protocol("WM_DELETE_WINDOW",on_closing)
-
-
-
-
 main.mainloop()
 
 

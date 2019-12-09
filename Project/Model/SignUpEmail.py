@@ -2,7 +2,6 @@ import smtplib
 
 
 def sendSignUpEmail(email):
-	
 	subject = "Thank You For Signing Up!"
 	msg = "Sign Up Completed!"
 	messsage = 'Subject: {}\n\n{}'.format(subject, msg)

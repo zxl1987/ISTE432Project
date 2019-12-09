@@ -31,24 +31,18 @@ class UserData:
         else:
             return False
 
-
-
-    '''----------------------------------------------------------New Function-------------------------------------------------------------------------------------------------'''
-    '''Get a list of User Information '''
     def viewUserInformation(self):
         return getDB.viewUserInfo(str(userInfo.getUserid()))
 
-    '''Set the User Information'''
     def setInformation(self, firstname, lastname, birth, address):
-        if birth=="":
-            birth="Infinity"
+        if birth=="": birth="Infinity"
         if getDB.viewUserInfo(str(userInfo.getUserid())):
             result = getDB.updateInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
         else:
             result = getDB.setUserInfo(str(userInfo.getUserid()), firstname, lastname, birth, address)
         return result
 
-    '''Get a list of User History'''
+    
     def viewUserHistory(self):
         historylist=[]
         if userInfo.getUserid():
@@ -63,8 +57,6 @@ class UserData:
                     return a[2]
 
 
-
-    '''Delete a list of '''
     def deleteHisiotry(self):
         return getDB.deleteUserHistory(str(userInfo.getUserid()))
 
@@ -77,16 +69,13 @@ class UserData:
         return getDB.getUserEmail(str(userInfo.getUserid()))
 
     def changeUserPassword(self, newP, oldP):
-        print getDB.getUserpassword(str(userInfo.getUserid()))[0][0]
-        if oldP != getDB.getUserpassword(str(userInfo.getUserid()))[0][0]:
-            return False
+        if oldP != getDB.getUserpassword(str(userInfo.getUserid()))[0][0]: return False
         else:
             return getDB.updateUserPassword(str(userInfo.getUserid()), newP)
 
     def changeUserEmail(self, newE):
         regex = '^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$'
-        if (not re.search(regex, newE)):
-            return False
+        if (not re.search(regex, newE)): return False
         return getDB.changeEmail(newE, str(userInfo.getUserid()))
 
 
