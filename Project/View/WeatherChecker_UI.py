@@ -163,9 +163,9 @@ def saveProfile():
 def savePassword():
 	global currentPasswordTextField, newPasswordTextField, confirmPasswordTextField, passwordLabel
 	
-	if confirmPasswordTextField.get("1.0", 'end-1c')!=newPasswordTextField.get("1.0", 'end-1c'):
+	if confirmPasswordTextField.get()!=newPasswordTextField.get():
 		passwordLabel.config(text='Password not match',foreground="red")
-	elif user.changeUserPassword(newPasswordTextField.get("1.0", 'end-1c'),currentPasswordTextField.get("1.0", 'end-1c')) != True:
+	elif user.changeUserPassword(newPasswordTextField.get(),currentPasswordTextField.get()) != True:
 		passwordLabel.config(text='Incorrect Password',foreground="red")
 	
         else:
@@ -188,7 +188,7 @@ def loginUI():
     passwordLabel = Label(login, text="Password", font=("Helvetica", 12))
     passwordLabel.place(x=60, y=72)
 
-    passwordTextFieldLogin = Text(login)
+    passwordTextFieldLogin = Entry(login, show="*")
     passwordTextFieldLogin.place(x=150, y=70, height=25, width=200)
 
     loginLabel = Label(login, text="", font=("Helvetica", 12))
@@ -203,7 +203,7 @@ def loginUI():
 def checklogin():
     	global usernameTextFieldLogin, passwordTextFieldLogin, loginLabel, user, dateTextField, timeTextField, time2TextField, var, reminderMsgLabel, login
 
-        loginCheck = user.verify(usernameTextFieldLogin.get("1.0", 'end-1c'),passwordTextFieldLogin.get("1.0", 'end-1c'))
+        loginCheck = user.verify(usernameTextFieldLogin.get("1.0", 'end-1c'),passwordTextFieldLogin.get())
    	if loginCheck == False: 
 		loginLabel.config(text='Wrong Username/Password',foreground="red")
    	elif loginCheck == True: 
@@ -362,19 +362,19 @@ def changePasswordUI():
 	currentPasswordLabel = Label(changePassword, text="Current Password", font=("Helvetica", 12))
 	currentPasswordLabel.place(x=30, y=30)
 
-	currentPasswordTextField = Text(changePassword)
+	currentPasswordTextField = Entry(changePassword, show="*")
 	currentPasswordTextField.place(x=170, y=30, height=25, width=200)
 
 	newPasswordLabel = Label(changePassword, text="New Password", font=("Helvetica", 12))
 	newPasswordLabel.place(x=30, y=72)
 
-	newPasswordTextField = Text(changePassword)
+	newPasswordTextField = Entry(changePassword, show="*")
 	newPasswordTextField.place(x=170, y=72, height=25, width=200)
 
 	confirmPasswordLabel = Label(changePassword, text="Confirm Password", font=("Helvetica", 12))
 	confirmPasswordLabel.place(x=30, y=114)
 
-	confirmPasswordTextField = Text(changePassword)
+	confirmPasswordTextField = Entry(changePassword, show="*")
 	confirmPasswordTextField.place(x=170, y=114, height=25, width=200)
 
 	passwordLabel = Label(changePassword, text="")
@@ -402,7 +402,7 @@ def signUpUI():
 	passwordLabel = Label(signUp, text="Password", font=("Helvetica", 12))
 	passwordLabel.place(x=60, y=72)
 
-	passwordTextFieldSignUp = Text(signUp)
+	passwordTextFieldSignUp = Entry(signUp, show="*")
 	passwordTextFieldSignUp.place(x=150, y=70, height=25, width=200)
 
 	emailLabel = Label(signUp, text="Email", font=("Helvetica", 12))
@@ -423,7 +423,7 @@ def signUpUI():
 def checkSignUp():
 	global user, usernameTextFieldSignUp, passwordTextFieldSignUp, emailTextFieldSignUp, signUpLabel
 
-        signUpCheck = user.signUp(usernameTextFieldSignUp.get("1.0", 'end-1c'),passwordTextFieldSignUp.get("1.0", 'end-1c'),emailTextFieldSignUp.get("1.0", 'end-1c'))
+        signUpCheck = user.signUp(usernameTextFieldSignUp.get("1.0", 'end-1c'),passwordTextFieldSignUp.get(),emailTextFieldSignUp.get("1.0", 'end-1c'))
    	if signUpCheck != True: signUpLabel.config(text=signUpCheck,foreground="red")
    	elif signUpCheck == True: 
 	     signUpLabel.config(text="Congratulations!",foreground="green")
