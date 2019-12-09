@@ -16,22 +16,22 @@ from Model.Reminder import *
 from Model.SignUpEmail import *
 main = Tk()
 emailTimerController = True
+emailTimerCirculationController = True
 login = None
 user = UserData()
 searchWeather = False
 global localoption
 localoption=1
 reminderArr = []
+reminderCirculationArr = []
 def restart_program():
     python = sys.executable
     os.execl(python, python, * sys.argv)
 
-def setReminderEmail():
-	global searchWeather
-	global locationTextField
-	global localoption
-	cityName = locationTextField.get("1.0", 'end-1c')
-	info = WeatherData(localoption, cityName)
+def setReminderEmail(option,cityName):
+		
+	global reminderMsgLabel
+	info = WeatherData(option, cityName)
 	data = info.getWeatherInfo()
 	msg = "Weather for "+cityName+"\n\n"
 	msg += "Current Temperature: "+str(data[3])+" F\n"
@@ -41,20 +41,80 @@ def setReminderEmail():
 	msg += "Humidity: "+str(data[6])+"%\n"
 	msg += "Cloud Description: "+data[5]
 
+	email = user.getUserEmail()[0][0]
+	if sendReminder(email,msg):
+		reminderMsgLabel.config(text='Reminder set completed.',foreground="green")
+
+	
+def setReminder1():
+	global dateTextField
+	global timeTextField
+	global reminderMsgLabel
+	global locationTextField
+	global localoption
+	try:
+		time = dateTextField.get("1.0", 'end-1c') + " " + timeTextField.get("1.0", 'end-1c')
+		reminderTime = dt.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+	except:
+		reminderMsgLabel.config(text='Date/Time Incorrect in format\nyyyy-mm-dd hh:mm:ss.',foreground="red")
+		return
+
+
 	if searchWeather == True:
-		email = user.getUserEmail()[0][0]
-		sendReminder(email,msg)
+		cityName = locationTextField.get("1.0", 'end-1c')
+		searchArr = []
+		searchArr.append(localoption)
+		searchArr.append(cityName)
+		searchArr.append(reminderTime)
+		reminderArr.append(searchArr)
+		reminderMsgLabel.config(text='Reminder Set!',foreground="green")
 	else:
-		print 'no'
+		reminderMsgLabel.config(text='Please Search first.',foreground="red")
+		return
+	
 
-def setReminder():
-    global dateTextField
-    global timeTextField
+    
 
-    time = dateTextField.get("1.0", 'end-1c') + " " + timeTextField.get("1.0", 'end-1c')
-    reminderTime = dt.datetime.strptime(time, '%Y-%m-%d %H:%M:%S')
+def setReminder2():
+    	global time2TextField
+	global var 
+	global locationTextField
+	global localoption
+	global reminderMsgLabel
+	cityName = locationTextField.get("1.0", 'end-1c')
+	day = var.get()
+	dayNum = ''
+	if day == 'Monday': dayNum = 0	
+	elif day == 'Tuesday': dayNum = 1 
+	elif day == 'Wednesday': dayNum = 2
+	elif day == 'Thursday': dayNum = 3
+	elif day == 'Friday': dayNum = 4 
+	elif day == 'Saturday': dayNum = 5 
+	elif day == 'Sunday': dayNum = 6 
+	elif day == 'Everyday': dayNum = 7
 
-    reminderArr.append(reminderTime)
+	
+
+	try:
+		time = time2TextField.get("1.0", 'end-1c')		
+		reminderTime = dt.datetime.strptime(time, '%H:%M:%S')
+	except:
+		reminderMsgLabel.config(text='Time Incorrect in format\nhh:mm:ss.',foreground="red")
+		return
+	
+
+	if searchWeather == True:
+		arr = []
+		arr.append(localoption)
+		arr.append(cityName)
+		arr.append(dayNum)
+		arr.append(time)
+		reminderCirculationArr.append(arr)
+		reminderMsgLabel.config(text='Reminder Set!',foreground="green")
+	else:
+		reminderMsgLabel.config(text='Please Search first.',foreground="red")
+		return
+	
 
 
 def emailTimer():
@@ -64,14 +124,32 @@ def emailTimer():
 		now = dt.datetime.now()
 	
 		for emailTime in reminderArr:
-			if now >= emailTime:
-				setReminderEmail()
+			if now >= emailTime[2]:
+				setReminderEmail(emailTime[0],emailTime[1])
 				reminderArr.remove(emailTime)
-			
+
+def emailCirculationTimer():
+	global emailTimerCirculationController
+	while(emailTimerCirculationController):		
+		time.sleep(1)
+		now = dt.datetime.now()
+		nowTime = dt.datetime.strftime(now, '%H:%M:%S')
+		for emailTime in reminderCirculationArr:
+			if emailTime[2] == 7:
+				if nowTime == emailTime[3]:
+					setReminderEmail(emailTime[0],emailTime[1])
+			else:
+				if now.weekday() == emailTime[2]:
+					if nowTime == emailTime[3]:
+						setReminderEmail(emailTime[0],emailTime[1])
+					
+		
+		
 def on_closing():
 	print "close"
-	global main, emailTimerController
+	global main, emailTimerController, emailTimerCirculationController
 	emailTimerController = False
+	emailTimerCirculationController = False
 	time.sleep(1.1)
 	main.destroy()
 
@@ -149,6 +227,9 @@ def checklogin():
 	global user
 	global dateTextField
 	global timeTextField
+	global time2TextField
+	global var
+	global reminderMsgLabel
         loginCheck = user.verify(usernameTextFieldLogin.get("1.0", 'end-1c'),passwordTextFieldLogin.get("1.0", 'end-1c'))
    	if loginCheck == False: 
 		loginLabel.config(text='Wrong Username/Password',foreground="red")
@@ -194,11 +275,21 @@ def checklogin():
 		orReminderLabel = Label(main, text="or", font=("Times", 12))
 		orReminderLabel.place(x=760, y=125)
 
-		setButton = Button(main, text="Set", command = setReminder)
-		setButton.place(anchor=CENTER, x=950, y=138, height=25, width=60)
+		set1Button = Button(main, text="Set", command = setReminder1)
+		set1Button.place(x=920, y=100, height=25, width=60)
+		
+		set2Button = Button(main, text="Set", command = setReminder2)
+		set2Button.place(x=920, y=150, height=25, width=60)
+
+		reminderMsgLabel = Label(main, text="1", font=("Times", 12))
+		reminderMsgLabel.place(anchor=CENTER, x=800, y=200)
+
+		historyLabel = Label(main, text="Search History", font=("Times", 12))
+		historyLabel.place(x=550, y=220)
+
 		updateHistoryList()
 		historyClear = Button(main, text="Clear", command=clear)
-		historyClear.place(anchor=CENTER, x=950, y=270, height=25, width=60)
+		historyClear.place(anchor=CENTER, x=950, y=262, height=25, width=60)
 		
 		if not user.viewUserInformation():
 			userWelcomeMsg = "Welcome"
@@ -218,6 +309,7 @@ def checklogin():
 def clear():
 	user.deleteHisiotry()
 	updateHistoryList()
+
 def updateHistoryList():
 	variable = StringVar(main)
 	variable.set("one")  # default value
@@ -226,7 +318,7 @@ def updateHistoryList():
 	historyChosen = ttk.Combobox(main, textvariable="variable", values=user.viewUserHistory())
 	historyChosen.bind("<<ComboboxSelected>>", callback)
 	historyChosen.pack()
-	historyChosen.place(x=600, y=230, height=25, width=300)
+	historyChosen.place(x=620, y=250, height=25, width=280)
 
 
 def callback(eventObject):
@@ -492,6 +584,9 @@ for txt, val in address:
 
 t = threading.Thread(target=emailTimer)
 t.start()
+
+t2 = threading.Thread(target=emailCirculationTimer)
+t2.start()
 
 main.protocol("WM_DELETE_WINDOW",on_closing)
 
